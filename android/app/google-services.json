@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "632592536519",
+    "project_id": "locafy-ab51c",
+    "storage_bucket": "locafy-ab51c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632592536519:android:bd0c518c2d2e0a904c3fe2",
+        "android_client_info": {
+          "package_name": "com.example.locafy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgxNsPqtdOYXr9SPusz9AXrCwA2B_W4J8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
