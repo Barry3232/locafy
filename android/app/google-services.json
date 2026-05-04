@@ -12,7 +12,20 @@
           "package_name": "com.example.locafy"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "632592536519-gud5lmqqevedup50f1pva70u65q477uj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.locafy",
+            "certificate_hash": "873618f4eea2c24cfcf2387907b271e754a61ee4"
+          }
+        },
+        {
+          "client_id": "632592536519-m132gv005n1fbpgm3qc8ntmh44orvifk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBgxNsPqtdOYXr9SPusz9AXrCwA2B_W4J8"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632592536519-m132gv005n1fbpgm3qc8ntmh44orvifk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "632592536519-pqlfhf3oepkp6008fehkpkqv264t6sc1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.locafy"
+              }
+            }
+          ]
         }
       }
     }
