@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:locafy/features/screens/registration_screen.dart';
+import 'package:locafy/features/screens/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  final formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
-
+  bool _isInvalid = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          'Welcome Back!',
+                          'Create Account',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -79,14 +84,67 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 25),
 
+                        TextFormField(
+                          controller: _firstNameController,
+                          key: ValueKey('FirstNameField'),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'First name required';
+                            }
+                            null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'First Name',
+                            hintText: 'Enter your first name',
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF2C56C0)),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        TextFormField(
+                          controller: _lastNameController,
+                          key: ValueKey('LastNameField'),
+                          keyboardType: TextInputType.name,
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'LastName is required'
+                              : null,
+                          decoration: InputDecoration(
+                            labelText: 'Last Name',
+                            hintText: 'Enter your last name',
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF2C56C0)),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+
                         TextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            hintText: 'youremail@example.com',
+                            hintText: 'Enter your email',
                             prefixIcon: const Icon(Icons.email_outlined),
                             border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF2C56C0)),
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
@@ -102,6 +160,41 @@ class _LoginScreenState extends State<LoginScreen> {
                             hintText: 'Enter your password',
                             prefixIcon: const Icon(Icons.lock_outline),
                             border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF2C56C0)),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        TextField(
+                          controller: _confirmPasswordController,
+                          obscureText: !_isPasswordVisible,
+                          decoration: InputDecoration(
+                            labelText: 'Confirm Password',
+                            hintText: 'Re-enter your password',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFF2C56C0)),
                               borderRadius: BorderRadius.circular(15),
                             ),
                             suffixIcon: IconButton(
@@ -133,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             child: const Text(
-                              'Login',
+                              'Create Account',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -141,20 +234,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                        ),
-
-                        const SizedBox(height: 1),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                // Navigate to register
-                              },
-                              child: const Text("Reset Password"),
-                            ),
-                          ],
                         ),
                       ],
                     ),
@@ -199,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('New Member?', style: TextStyle(color: Colors.grey)),
+                Text('Have an Account?', style: TextStyle(color: Colors.grey)),
 
                 TextButton(
                   style: TextButton.styleFrom(
@@ -212,13 +291,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          return RegistrationScreen();
+                          return LoginScreen();
                         },
                       ),
                     );
                   },
                   child: Text(
-                    'Sign Up Here',
+                    'Sign in Here',
                     style: TextStyle(color: Colors.blue),
                   ),
                 ),

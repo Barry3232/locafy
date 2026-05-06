@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:locafy/features/screens/login_screen.dart';
+import 'package:locafy/features/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +9,7 @@ void main() async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Locafy',
-      home: LoginScreen(),
+      home: SplashScreen(),
     ),
   );
 }
