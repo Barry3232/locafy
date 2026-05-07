@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/registration_screen.dart';
+import 'package:locafy/features/screens/reset_password.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -151,7 +152,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  // Navigate to register
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return ResetPassword();
+                                      },
+                                    ),
+                                  );
                                 },
                                 child: const Text("Reset Password"),
                               ),
