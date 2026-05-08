@@ -12,8 +12,28 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
+
+  bool get _loginButtonStatus {
+    return _emailController.text.isEmpty && _passwordController.text.isEmpty;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _emailController.addListener(() => setState(() {}));
+    _passwordController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,9 +147,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: (!_loginButtonStatus)
+                                  ? null
+                                  : () {
+                                      if (!_formKey.currentState!.validate()) {
+                                        return;
+                                      }
+                                    },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C56C0),
+                                backgroundColor: _loginButtonStatus
+                                    ? Colors.grey
+                                    : const Color(0xFF2C56C0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
@@ -155,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) {
-                                        return ResetPassword();
+                                        return const ResetPassword();
                                       },
                                     ),
                                   );
