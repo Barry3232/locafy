@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class VerifyNumber extends StatefulWidget {
-  const VerifyNumber({super.key});
+  final String phoneNumber;
+  final String firstName;
+  final String lastName;
+  final String username;
+  final String email;
+  final String password;
+
+  const VerifyNumber({
+    required this.phoneNumber,
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.email,
+    required this.password,
+    super.key,
+  });
 
   @override
   State<VerifyNumber> createState() => _VerifyNumberState();
