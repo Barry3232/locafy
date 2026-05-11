@@ -107,7 +107,7 @@ class _VerifyNumberState extends State<VerifyNumber> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
-                            'Mobile Number',
+                            'Verify Account',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class _VerifyNumberState extends State<VerifyNumber> {
                           Padding(
                             padding: const EdgeInsets.only(left: 40, right: 40),
                             child: const Text(
-                              'Please enter your phone number. We will send you a 4-digit code to verify your account.',
+                              'Please enter 6-digit code. So we will verify your account.',
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 13),
                             ),
@@ -434,7 +434,7 @@ class _VerifyNumberState extends State<VerifyNumber> {
                                 ),
                               ),
                               child: const Text(
-                                'Send Code',
+                                'Verify Code',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
