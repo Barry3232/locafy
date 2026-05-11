@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/verify_number.dart';
 
 class MobileVerification extends StatefulWidget {
-  const MobileVerification({super.key});
+  final String firstName;
+  final String lastName;
+  final String username;
+  final String email;
+  final String password;
+  const MobileVerification({
+    required this.firstName,
+    required this.lastName,
+    required this.username,
+    required this.email,
+    required this.password,
+    super.key,
+  });
 
   @override
   State<MobileVerification> createState() => _MobileVerificationState();
@@ -128,7 +140,16 @@ class _MobileVerificationState extends State<MobileVerification> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return VerifyNumber();
+                                      return VerifyNumber(
+                                        phoneNumber: _phoneNumberController.text
+                                            .trim(),
+
+                                        firstName: widget.firstName,
+                                        lastName: widget.lastName,
+                                        username: widget.username,
+                                        email: widget.email,
+                                        password: widget.password,
+                                      );
                                     },
                                   ),
                                 );

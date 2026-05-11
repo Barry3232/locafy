@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/login_screen.dart';
 import 'package:locafy/features/screens/mobile_verification_screen.dart';
+import 'package:locafy/features/services/auth_services.dart';
 import 'package:locafy/features/validators/email&password_validators/validator.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -19,17 +20,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
 
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   bool get _fields {
     return _firstNameController.text.isNotEmpty &&
         _lastNameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
+        _userNameController.text.isNotEmpty &&
         _confirmPasswordController.text.isNotEmpty;
   }
 
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
+  String? _errorMessage;
   final bool _isInvalid = false;
 
   @override
@@ -38,6 +42,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _firstNameController.addListener(() => setState(() {}));
     _lastNameController.addListener(() => setState(() {}));
     _emailController.addListener(() => setState(() {}));
+    _userNameController.addListener(() => setState(() {}));
     _passwordController.addListener(() => setState(() {}));
     _confirmPasswordController.addListener(() => setState(() {}));
   }
@@ -50,6 +55,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _userNameController.dispose();
   }
 
   @override
@@ -108,7 +114,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(20),
                         child: Form(
-                          key: formKey,
+                          key: _formKey,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -301,28 +307,93 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 width: double.infinity,
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return MobileVerification();
-                                        },
-                                      ),
-                                    );
-                                  },
+                                  onPressed: (_fields && !_isLoading)
+                                      ? () async {
+                                          setState(() {
+                                            _errorMessage = null;
+                                          });
+
+                                          if (!_formKey.currentState!
+                                              .validate()) {
+                                            return;
+                                          }
+
+                                          setState(() {
+                                            _isLoading = true;
+                                          });
+
+                                          try {
+                                            if (context.mounted) {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return MobileVerification(
+                                                      firstName:
+                                                          _firstNameController
+                                                              .text
+                                                              .trim(),
+
+                                                      lastName:
+                                                          _lastNameController
+                                                              .text
+                                                              .trim(),
+
+                                                      username:
+                                                          _userNameController
+                                                              .text
+                                                              .trim(),
+
+                                                      email: _emailController
+                                                          .text
+                                                          .trim(),
+
+                                                      password:
+                                                          _passwordController
+                                                              .text
+                                                              .trim(),
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            }
+                                          } catch (e) {
+                                            setState(() {
+                                              _errorMessage =
+                                                  'Something went wrong';
+                                            });
+                                          } finally {
+                                            if (mounted) {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
+                                            }
+                                          }
+                                        }
+                                      : null,
+
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF2C56C0),
+                                    backgroundColor: _fields
+                                        ? const Color(0xFF2C56C0)
+                                        : Colors.grey,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                   ),
-                                  child: const Text(
-                                    'Create Account',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                  child: Center(
+                                    child: _isLoading
+                                        ? CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation(
+                                              Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Create Account',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
                                   ),
                                 ),
                               ),

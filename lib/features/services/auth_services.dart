@@ -35,4 +35,32 @@ class AuthServices {
       return 'something went wrong';
     }
   }
+
+  Future<String?> register({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+      talker.info('User successfully created account');
+    } on FirebaseAuthException catch (e, stackTrace) {
+      talker.error('Registration error', e, stackTrace);
+      switch (e.code) {
+        case 'email-already-in-use':
+          return 'An account already exists with this email';
+        case 'weak-password':
+          return 'Password should be at least 6 characters';
+        case 'network-request-failed':
+          return 'Check your internet connection';
+        default:
+          return 'Registration failed. Please try again.';
+      }
+    } catch (e, stackTrace) {
+      talker.error('Unexpected registration error', e, stackTrace);
+      return 'An unexpected error occurred';
+    }
+  }
 }
