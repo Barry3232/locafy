@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class VerifyNumber extends StatefulWidget {
   final String phoneNumber;
@@ -8,6 +10,7 @@ class VerifyNumber extends StatefulWidget {
   final String username;
   final String email;
   final String password;
+  final String verificationId;
 
   const VerifyNumber({
     required this.phoneNumber,
@@ -16,6 +19,7 @@ class VerifyNumber extends StatefulWidget {
     required this.username,
     required this.email,
     required this.password,
+    required this.verificationId,
     super.key,
   });
 
@@ -25,6 +29,9 @@ class VerifyNumber extends StatefulWidget {
 
 class _VerifyNumberState extends State<VerifyNumber> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String? _errorMessage;
+
   final focusNode1 = FocusNode();
   final focusNode2 = FocusNode();
   final focusNode3 = FocusNode();
@@ -436,12 +443,104 @@ class _VerifyNumberState extends State<VerifyNumber> {
                           ),
 
                           const SizedBox(height: 20),
+                          if (_errorMessage != null)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                border: Border.all(color: Colors.red.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _errorMessage!,
+                                style: TextStyle(color: Colors.red.shade700),
+                              ),
+                            ),
+
+                          const SizedBox(height: 10),
 
                           SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: (!_isLoading)
+                                  ? () async {
+                                      final otpCode =
+                                          otp1Controller.text +
+                                          otp2Controller.text +
+                                          otp3Controller.text +
+                                          otp4Controller.text +
+                                          otp5Controller.text +
+                                          otp6Controller.text;
+
+                                      if (otpCode.length != 6) {
+                                        setState(() {
+                                          _errorMessage =
+                                              'Enter complete OTP code';
+                                        });
+                                        return;
+                                      }
+
+                                      setState(() {
+                                        _isLoading = true;
+                                        _errorMessage = null;
+                                      });
+
+                                      try {
+                                        final credential =
+                                            PhoneAuthProvider.credential(
+                                              verificationId:
+                                                  widget.verificationId,
+                                              smsCode: otpCode,
+                                            );
+                                        await FirebaseAuth.instance
+                                            .signInWithCredential(credential);
+                                        await FirebaseAuth.instance
+                                            .createUserWithEmailAndPassword(
+                                              email: widget.email,
+                                              password: widget.password,
+                                            );
+                                        if (!mounted) return;
+
+                                        Center(
+                                          child: Container(
+                                            height: 150,
+                                            width: 150,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Colors.white,
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                'Account created succesfully',
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      } on FirebaseAuthException catch (e) {
+                                        setState(() {
+                                          _errorMessage =
+                                              e.message ??
+                                              'Verification failed';
+                                        });
+                                        _clearOtpFields();
+                                      } catch (e) {
+                                        setState(() {
+                                          _errorMessage =
+                                              'Something went wrong';
+                                        });
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      }
+                                    }
+                                  : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFF2C56C0),
                                 shape: RoundedRectangleBorder(

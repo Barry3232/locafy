@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/verify_number.dart';
+import 'package:locafy/features/services/phone_auth_service.dart';
+import 'dart:async';
 
 class MobileVerification extends StatefulWidget {
   final String firstName;
@@ -22,6 +24,29 @@ class MobileVerification extends StatefulWidget {
 
 class _MobileVerificationState extends State<MobileVerification> {
   final TextEditingController _phoneNumberController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _errorMessage;
+  Timer? _timer;
+
+  void _startTimer() {
+    _timer?.cancel();
+    if (_errorMessage != null) {
+      _timer = Timer(Duration(seconds: 5), () {
+        if (mounted) {
+          setState(() {
+            _errorMessage = null;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +125,12 @@ class _MobileVerificationState extends State<MobileVerification> {
                           TextField(
                             controller: _phoneNumberController,
 
+                            keyboardType: TextInputType.phone,
+                            maxLength: 10,
                             decoration: InputDecoration(
                               labelText: 'Phone Number',
+
+                              counterText: '',
                               hintText: '00000000000',
                               prefixIcon: IntrinsicWidth(
                                 child: Row(
@@ -116,6 +145,14 @@ class _MobileVerificationState extends State<MobileVerification> {
                                         color: Colors.grey,
                                       ),
                                     ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '+234',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
                                     Container(
                                       width: 1,
                                       height: 24,
@@ -124,6 +161,7 @@ class _MobileVerificationState extends State<MobileVerification> {
                                   ],
                                 ),
                               ),
+
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
@@ -132,42 +170,124 @@ class _MobileVerificationState extends State<MobileVerification> {
 
                           const SizedBox(height: 20),
 
+                          if (_errorMessage != null)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                border: Border.all(color: Colors.red.shade300),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _errorMessage!,
+                                style: TextStyle(color: Colors.red.shade700),
+                              ),
+                            ),
+
+                          SizedBox(height: 10),
+
                           SizedBox(
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return VerifyNumber(
-                                        phoneNumber: _phoneNumberController.text
-                                            .trim(),
+                              onPressed: () async {
+                                setState(() {
+                                  _errorMessage = null;
+                                  _isLoading = true;
+                                });
 
-                                        firstName: widget.firstName,
-                                        lastName: widget.lastName,
-                                        username: widget.username,
-                                        email: widget.email,
-                                        password: widget.password,
+                                if (_phoneNumberController.text.isEmpty ||
+                                    _phoneNumberController.text.length != 10) {
+                                  setState(() {
+                                    _errorMessage =
+                                        'Please enter a valid phone number';
+                                    _isLoading = false;
+                                  });
+                                  _startTimer();
+                                  return;
+                                }
+
+                                try {
+                                  final phoneAuthService = PhoneAuthService();
+                                  await phoneAuthService.sendOtp(
+                                    phoneNumber:
+                                        '+234${_phoneNumberController.text.trim()}',
+                                    onCodeSent: (verificationId) {
+                                      if (!mounted) return;
+
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return VerifyNumber(
+                                              verificationId: verificationId,
+                                              phoneNumber:
+                                                  _phoneNumberController.text
+                                                      .trim(),
+
+                                              firstName: widget.firstName,
+                                              lastName: widget.lastName,
+                                              username: widget.username,
+                                              email: widget.email,
+                                              password: widget.password,
+                                            );
+                                          },
+                                        ),
                                       );
                                     },
-                                  ),
-                                );
+
+                                    onVerificationError: (onVerificationError) {
+                                      if (!mounted) return;
+
+                                      setState(() {
+                                        _errorMessage = onVerificationError;
+                                        _isLoading = false;
+                                      });
+
+                                      _startTimer();
+                                    },
+                                  );
+                                } catch (e) {
+                                  if (!mounted) return;
+                                  setState(() {
+                                    _errorMessage =
+                                        'Unable to send code. Check your internet connection.';
+                                    _isLoading = false;
+                                  });
+                                  _startTimer();
+                                }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C56C0),
+                                backgroundColor: _isLoading
+                                    ? Colors.grey
+                                    : Color(0xFF2C56C0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                               ),
-                              child: const Text(
-                                'Send Code',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? Center(
+                                      child: SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Send Code',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
 

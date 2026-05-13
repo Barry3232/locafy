@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/login_screen.dart';
 import 'package:locafy/features/screens/mobile_verification_screen.dart';
@@ -323,6 +325,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           });
 
                                           try {
+                                            await Future.delayed(
+                                              Duration(seconds: 5),
+                                              () {
+                                                if (mounted) {
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                }
+                                              },
+                                            );
                                             if (context.mounted) {
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
@@ -381,9 +393,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   ),
                                   child: Center(
                                     child: _isLoading
-                                        ? CircularProgressIndicator(
-                                            valueColor: AlwaysStoppedAnimation(
-                                              Colors.white,
+                                        ? SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                    Colors.white,
+                                                  ),
                                             ),
                                           )
                                         : Text(
