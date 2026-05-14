@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/login_screen.dart';
 import 'package:locafy/features/screens/mobile_verification_screen.dart';
-import 'package:locafy/features/services/auth_services.dart';
 import 'package:locafy/features/validators/email&password_validators/validator.dart';
 
 class RegistrationScreen extends StatefulWidget {

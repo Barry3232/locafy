@@ -1,7 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:locafy/features/screens/login_screen.dart';
+import 'package:locafy/features/screens/nav_bar.dart';
 
 class VerifyNumber extends StatefulWidget {
   final String phoneNumber;
@@ -31,6 +32,7 @@ class _VerifyNumberState extends State<VerifyNumber> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
+  bool _isSuccess = false;
 
   final focusNode1 = FocusNode();
   final focusNode2 = FocusNode();
@@ -497,27 +499,31 @@ class _VerifyNumberState extends State<VerifyNumber> {
                                             );
                                         await FirebaseAuth.instance
                                             .signInWithCredential(credential);
-                                        await FirebaseAuth.instance
-                                            .createUserWithEmailAndPassword(
+
+                                        final emailCredential =
+                                            EmailAuthProvider.credential(
                                               email: widget.email,
                                               password: widget.password,
                                             );
+                                        await FirebaseAuth.instance.currentUser!
+                                            .linkWithCredential(
+                                              emailCredential,
+                                            );
+
                                         if (!mounted) return;
 
-                                        Center(
-                                          child: Container(
-                                            height: 150,
-                                            width: 150,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              color: Colors.white,
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                'Account created succesfully',
-                                              ),
-                                            ),
+                                        setState(() {
+                                          _isSuccess = true;
+                                        });
+
+                                        await Future.delayed(
+                                          const Duration(seconds: 5),
+                                        );
+
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => const LoginScreen(),
                                           ),
                                         );
                                       } on FirebaseAuthException catch (e) {
@@ -542,19 +548,30 @@ class _VerifyNumberState extends State<VerifyNumber> {
                                     }
                                   : null,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2C56C0),
+                                backgroundColor: _isLoading
+                                    ? Colors.grey
+                                    : const Color(0xFF2C56C0),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                               ),
-                              child: const Text(
-                                'Verify Code',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child: _isLoading
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Verify Code',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
 
@@ -576,6 +593,43 @@ class _VerifyNumberState extends State<VerifyNumber> {
                     ),
                   ),
                 ),
+                if (_isSuccess)
+                  Positioned.fill(
+                    child: Container(
+                      color: Colors.black54,
+                      child: Center(
+                        child: Container(
+                          width: 260,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 70,
+                              ),
+
+                              SizedBox(height: 15),
+
+                              Text(
+                                'Account Created Successfully',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ],

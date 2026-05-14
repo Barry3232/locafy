@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locafy/features/screens/nav_bar.dart';
 import 'package:locafy/features/screens/registration_screen.dart';
 import 'package:locafy/features/screens/reset_password.dart';
 import 'package:locafy/features/validators/email&password_validators/validator.dart';
@@ -215,6 +216,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                               _errorMessage =
                                                   'Login Successful';
                                             });
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => NavBarScreen(),
+                                              ),
+                                            );
                                           } else {
                                             setState(() {
                                               _errorMessage = error;

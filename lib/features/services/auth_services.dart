@@ -62,5 +62,6 @@ class AuthServices {
       talker.error('Unexpected registration error', e, stackTrace);
       return 'An unexpected error occurred';
     }
+    return null;
   }
 }
