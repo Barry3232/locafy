@@ -79,7 +79,84 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      body: const Center(child: Text('Home Screen')),
+      body: Padding(
+        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
+        child: Column(
+          children: [
+            Container(
+              height: 230,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                // color: Colors.blue,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.asset(
+                      'assets/images/explore.jpg',
+                      height: 230,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+
+                  Container(
+                    height: 230,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 170,
+                          child: Text(
+                            'Explore Your City Like Never Before',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 10),
+
+                        SizedBox(
+                          width: 250,
+                          child: Text(
+                            'Find amazing places, connect local and experience more.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 15),
+
+                        ElevatedButton(
+                          onPressed: () {},
+                          child: Text('Explore Now'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

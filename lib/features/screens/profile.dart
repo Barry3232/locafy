@@ -477,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 10),
 
                   Card(
-                    color: Colors.white,
+                    color: Colors.red,
                     elevation: 5,
                     child: Column(
                       children: [
