@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _startErrorTimer() {
     _timer?.cancel();
     _timer = Timer(Duration(seconds: 5), () {
+      if (!mounted) return;
       setState(() {
         _errorMessage = null;
       });
@@ -49,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _timer?.cancel();
   }
 
   @override

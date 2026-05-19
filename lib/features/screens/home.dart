@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:locafy/widgets/category_section.dart';
+import 'package:locafy/widgets/porpular_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,82 +81,236 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      body: Padding(
-        padding: EdgeInsets.only(top: 20, left: 16, right: 16),
-        child: Column(
-          children: [
-            Container(
-              height: 230,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                // color: Colors.blue,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.asset(
-                      'assets/images/explore.jpg',
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 120),
+          child: Column(
+            children: [
+              Container(
+                height: 230,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  // color: Colors.blue,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        'assets/images/explore.jpg',
+                        height: 230,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+
+                    Container(
                       height: 230,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
-                  ),
-
-                  Container(
-                    height: 230,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: 170,
-                          child: Text(
-                            'Explore Your City Like Never Before',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              height: 1.2,
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 170,
+                            child: Text(
+                              'Explore Your City Like Never Before',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                height: 1.2,
+                              ),
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: 10),
+                          SizedBox(height: 10),
 
-                        SizedBox(
-                          width: 250,
-                          child: Text(
-                            'Find amazing places, connect local and experience more.',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.white,
-                              height: 1.3,
+                          SizedBox(
+                            width: 200,
+                            child: Text(
+                              'Find amazing places, connect local and experience more.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                height: 1.3,
+                              ),
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: 15),
+                          SizedBox(height: 15),
 
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Explore Now'),
-                        ),
-                      ],
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Color(0xFF0A4FD6),
+                              ),
+                              shape:
+                                  WidgetStateProperty.all<
+                                    RoundedRectangleBorder
+                                  >(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              'Explore Now',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Row(
+                children: [
+                  Text(
+                    'Categories',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'See All',
+                      style: TextStyle(color: Color(0xFF0A4FD6)),
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CategoryItems(
+                    title: 'Restaurants',
+                    icon: Icons.restaurant_outlined,
+                    color: Color(0x14FF9800),
+                    iconColor: Color(0xFFFF9800),
+                    onTap: () {},
+                  ),
+                  CategoryItems(
+                    title: 'Hotels',
+                    icon: Icons.hotel_outlined,
+                    color: Color(0x1400B0FF),
+                    iconColor: Color(0xFF00B0FF),
+                    onTap: () {},
+                  ),
+                  CategoryItems(
+                    title: 'Shops',
+                    icon: Icons.shopping_bag_outlined,
+                    color: Color(0x1400C853),
+                    iconColor: Color(0xFF00C853),
+                    onTap: () {},
+                  ),
+                  CategoryItems(
+                    title: 'Services',
+                    icon: Icons.handyman_outlined,
+                    color: Color(0x14FF4081),
+                    iconColor: Color(0xFFFF4081),
+                    onTap: () {},
+                  ),
+                  CategoryItems(
+                    title: 'More',
+                    icon: Icons.grid_view_outlined,
+                    color: Color(0x14000000),
+                    iconColor: Color(0xFF000000),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              Row(
+                children: [
+                  Text(
+                    'Popular Near You',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'See All',
+                      style: TextStyle(color: Color(0xFF0A4FD6)),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 10),
+
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    PopularItems(
+                      onTap: () {
+                        // Handle tap event, e.g., navigate to details page
+                      },
+                      title: 'Shoprite',
+                      image: 'assets/images/grocery.jpg',
+                      text: 'Shop',
+                      text2: '0.5 km away',
+                      rating: '4.6 (12)',
+                    ),
+
+                    SizedBox(width: 15),
+
+                    PopularItems(
+                      onTap: () {
+                        // Handle tap event, e.g., navigate to details page
+                      },
+                      title: 'Genesis Cafe',
+                      image: 'assets/images/Genesis.jpg',
+                      text: 'Restaurant',
+                      text2: '1 km away',
+                      rating: '4.8 (20)',
+                    ),
+
+                    SizedBox(width: 15),
+
+                    PopularItems(
+                      onTap: () {
+                        // Handle tap event, e.g., navigate to details page
+                      },
+                      title: 'Kilimanjaro Cafe',
+                      image: 'assets/images/kilimanjaro.jpg',
+                      text: 'Restaurant',
+                      text2: '2 km away',
+                      rating: '3.8 (13)',
+                    ),
+
+                    SizedBox(width: 15),
+
+                    PopularItems(
+                      onTap: () {
+                        // Handle tap event, e.g., navigate to details page
+                      },
+                      title: 'The Boss store',
+                      image: 'assets/images/The Boss store.jpg',
+                      text: 'Shop',
+                      text2: '10 km away',
+                      rating: '3.5 (13)',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
