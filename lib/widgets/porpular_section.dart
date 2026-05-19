@@ -71,86 +71,82 @@ class PopularItems extends StatelessWidget {
                       ],
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        color: Colors.white.withOpacity(0.3),
-                        padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.black,
+                    Container(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 10,
+                      ),
+                      color: Colors.white.withOpacity(0.3),
+
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(fontSize: 12, color: Colors.black),
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            children: [
+                              Text(
+                                text,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 5),
-                            Row(
-                              children: [
-                                Text(
-                                  text,
+                              SizedBox(width: 4),
+                              CircleAvatar(
+                                radius: 2,
+                                backgroundColor: Colors.grey,
+                              ),
+                              SizedBox(width: 4),
+
+                              Text(
+                                text2,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 7),
+                          Row(
+                            children: [
+                              Icon(Icons.star, size: 14, color: Colors.orange),
+                              SizedBox(width: 4),
+                              Text(
+                                rating,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Spacer(),
+
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: Size.zero,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                onPressed: () {},
+                                child: Text(
+                                  'Open',
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Colors.grey,
+                                    color: Color(0xFF0A4FD6),
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                CircleAvatar(
-                                  radius: 2,
-                                  backgroundColor: Colors.grey,
-                                ),
-                                SizedBox(width: 4),
-
-                                Text(
-                                  text2,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 7),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.star,
-                                  size: 14,
-                                  color: Colors.orange,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  rating,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Spacer(),
-
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: Size.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  onPressed: () {},
-                                  child: Text(
-                                    'Open',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Color(0xFF0A4FD6),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
