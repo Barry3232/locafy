@@ -270,7 +270,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                         );
-                        // Handle tap event, e.g., navigate to details page
                       },
                       business: businesses[0],
                     ),
@@ -279,7 +278,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     PopularItems(
                       onTap: () {
-                        // Handle tap event, e.g., navigate to details page
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsScreen(business: businesses[1]);
+                            },
+                          ),
+                        );
                       },
                       business: businesses[1],
                     ),
@@ -288,7 +293,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     PopularItems(
                       onTap: () {
-                        // Handle tap event, e.g., navigate to details page
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsScreen(business: businesses[2]);
+                            },
+                          ),
+                        );
                       },
                       business: businesses[2],
                     ),
@@ -297,7 +308,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     PopularItems(
                       onTap: () {
-                        // Handle tap event, e.g., navigate to details page
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsScreen(business: businesses[3]);
+                            },
+                          ),
+                        );
                       },
                       business: businesses[3],
                     ),
@@ -316,7 +333,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
               RecommendedItems(
                 onTap: () {
-                  // Handle tap event, e.g., navigate to details page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailsScreen(business: businesses[4]);
+                      },
+                    ),
+                  );
                 },
                 business: businesses[4],
               ),
@@ -325,7 +348,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
               RecommendedItems(
                 onTap: () {
-                  // Handle tap event, e.g., navigate to details page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailsScreen(business: businesses[5]);
+                      },
+                    ),
+                  );
                 },
                 business: businesses[5],
               ),
@@ -334,7 +363,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
               RecommendedItems(
                 onTap: () {
-                  // Handle tap event, e.g., navigate to details page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailsScreen(business: businesses[6]);
+                      },
+                    ),
+                  );
                 },
                 business: businesses[6],
               ),
@@ -343,7 +378,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
               RecommendedItems(
                 onTap: () {
-                  // Handle tap event, e.g., navigate to details page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return DetailsScreen(business: businesses[7]);
+                      },
+                    ),
+                  );
                 },
                 business: businesses[7],
               ),

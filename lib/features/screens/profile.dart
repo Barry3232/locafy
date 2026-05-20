@@ -477,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 10),
 
                   Card(
-                    color: Colors.red,
+                    color: Colors.white,
                     elevation: 5,
                     child: Column(
                       children: [
@@ -492,9 +492,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              leading: Icon(Icons.logout_outlined),
-                              title: Text('Log Out'),
-                              trailing: Icon(Icons.navigate_next),
+                              leading: Icon(
+                                Icons.logout_outlined,
+                                color: Colors.red,
+                              ),
+                              title: Text(
+                                'Log Out',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              trailing: Icon(
+                                Icons.navigate_next,
+                                color: Colors.red,
+                              ),
                             ),
                           ),
                         ),
