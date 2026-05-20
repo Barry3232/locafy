@@ -82,16 +82,17 @@ class _NavBarScreenState extends State<NavBarScreen> {
             ),
             navItem(
               _isSelected && _currentIndex == 2
-                  ? Icons.message_rounded
-                  : Icons.message_outlined,
+                  ? Icons.add_circle_outline
+                  : Icons.add_circle_outline,
               2,
             ),
             navItem(
               _isSelected && _currentIndex == 3
-                  ? Icons.notifications_active
-                  : Icons.notifications_outlined,
+                  ? Icons.message_rounded
+                  : Icons.message_outlined,
               3,
             ),
+
             navItem(
               _isSelected && _currentIndex == 4
                   ? Icons.person

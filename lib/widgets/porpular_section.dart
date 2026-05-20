@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:locafy/models/business_model.dart';
 
 class PopularItems extends StatelessWidget {
-  final String title;
-  final String image;
+  final BusinessModel business;
   final VoidCallback? onTap;
-  final String text;
-  final String text2;
-  final String rating;
-  const PopularItems({
-    super.key,
-    required this.title,
-    required this.image,
-    this.onTap,
-    required this.text,
-    required this.text2,
-    required this.rating,
-  });
+
+  const PopularItems({super.key, this.onTap, required this.business});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +36,7 @@ class PopularItems extends StatelessWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(image),
+                              image: AssetImage(business.image),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -85,14 +75,14 @@ class PopularItems extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            title,
+                            business.name,
                             style: TextStyle(fontSize: 12, color: Colors.black),
                           ),
                           SizedBox(height: 5),
                           Row(
                             children: [
                               Text(
-                                text,
+                                business.category,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,
@@ -106,7 +96,7 @@ class PopularItems extends StatelessWidget {
                               SizedBox(width: 4),
 
                               Text(
-                                text2,
+                                business.distance,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,
@@ -120,7 +110,7 @@ class PopularItems extends StatelessWidget {
                               Icon(Icons.star, size: 14, color: Colors.orange),
                               SizedBox(width: 4),
                               Text(
-                                rating,
+                                business.rating,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.black,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:locafy/data/dummy_data.dart';
+import 'package:locafy/features/screens/details.dart';
 import 'package:locafy/widgets/category_section.dart';
 import 'package:locafy/widgets/porpular_section.dart';
+import 'package:locafy/widgets/recommended_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -85,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Padding(
           padding: EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 120),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 height: 230,
@@ -149,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
+                              backgroundColor: WidgetStateProperty.all<Color>(
                                 Color(0xFF0A4FD6),
                               ),
                               shape:
@@ -259,13 +263,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     PopularItems(
                       onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsScreen(business: businesses[0]);
+                            },
+                          ),
+                        );
                         // Handle tap event, e.g., navigate to details page
                       },
-                      title: 'Shoprite',
-                      image: 'assets/images/grocery.jpg',
-                      text: 'Shop',
-                      text2: '0.5 km away',
-                      rating: '4.6 (12)',
+                      business: businesses[0],
                     ),
 
                     SizedBox(width: 15),
@@ -274,11 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         // Handle tap event, e.g., navigate to details page
                       },
-                      title: 'Genesis Cafe',
-                      image: 'assets/images/Genesis.jpg',
-                      text: 'Restaurant',
-                      text2: '1 km away',
-                      rating: '4.8 (20)',
+                      business: businesses[1],
                     ),
 
                     SizedBox(width: 15),
@@ -287,11 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         // Handle tap event, e.g., navigate to details page
                       },
-                      title: 'Kilimanjaro Cafe',
-                      image: 'assets/images/kilimanjaro.jpg',
-                      text: 'Restaurant',
-                      text2: '2 km away',
-                      rating: '3.8 (13)',
+                      business: businesses[2],
                     ),
 
                     SizedBox(width: 15),
@@ -300,14 +299,53 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () {
                         // Handle tap event, e.g., navigate to details page
                       },
-                      title: 'The Boss store',
-                      image: 'assets/images/The Boss store.jpg',
-                      text: 'Shop',
-                      text2: '10 km away',
-                      rating: '3.5 (13)',
+                      business: businesses[3],
                     ),
                   ],
                 ),
+              ),
+
+              SizedBox(height: 20),
+
+              Text(
+                'Recommended for You',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              SizedBox(height: 10),
+
+              RecommendedItems(
+                onTap: () {
+                  // Handle tap event, e.g., navigate to details page
+                },
+                business: businesses[4],
+              ),
+
+              SizedBox(height: 15),
+
+              RecommendedItems(
+                onTap: () {
+                  // Handle tap event, e.g., navigate to details page
+                },
+                business: businesses[5],
+              ),
+
+              SizedBox(height: 15),
+
+              RecommendedItems(
+                onTap: () {
+                  // Handle tap event, e.g., navigate to details page
+                },
+                business: businesses[6],
+              ),
+
+              SizedBox(height: 15),
+
+              RecommendedItems(
+                onTap: () {
+                  // Handle tap event, e.g., navigate to details page
+                },
+                business: businesses[7],
               ),
             ],
           ),

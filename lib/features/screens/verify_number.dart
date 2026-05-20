@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locafy/features/screens/login_screen.dart';
-import 'package:locafy/features/screens/nav_bar.dart';
 
 class VerifyNumber extends StatefulWidget {
   final String phoneNumber;
