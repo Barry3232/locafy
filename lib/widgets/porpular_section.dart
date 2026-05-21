@@ -116,6 +116,13 @@ class PopularItems extends StatelessWidget {
                                   color: Colors.black,
                                 ),
                               ),
+                              Text(
+                                '(${business.reviewsCount})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.black,
+                                ),
+                              ),
                               Spacer(),
 
                               TextButton(

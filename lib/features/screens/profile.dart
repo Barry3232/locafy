@@ -500,10 +500,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'Log Out',
                                 style: TextStyle(color: Colors.red),
                               ),
-                              trailing: Icon(
-                                Icons.navigate_next,
-                                color: Colors.red,
-                              ),
                             ),
                           ),
                         ),
