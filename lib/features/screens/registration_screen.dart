@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/login_screen.dart';
 import 'package:locafy/features/screens/mobile_verification_screen.dart';
@@ -304,6 +304,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                               const SizedBox(height: 20),
 
+                              if (_errorMessage != null)
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    border: Border.all(
+                                      color: Colors.red.shade300,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red.shade700,
+                                    ),
+                                  ),
+                                ),
+
                               SizedBox(
                                 width: double.infinity,
                                 height: 50,
@@ -316,6 +336,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                                           if (!_formKey.currentState!
                                               .validate()) {
+                                            return;
+                                          }
+
+                                          final emailExists =
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .where(
+                                                    'email',
+                                                    isEqualTo: _emailController
+                                                        .text
+                                                        .trim(),
+                                                  )
+                                                  .get();
+
+                                          if (emailExists.docs.isNotEmpty) {
+                                            setState(() {
+                                              _errorMessage =
+                                                  'Email already exists';
+                                              _isLoading = false;
+                                            });
+
                                             return;
                                           }
 

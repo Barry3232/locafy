@@ -44,9 +44,7 @@ class DetailsScreen extends StatelessWidget {
                   backgroundColor: Colors.white,
                   child: IconButton(
                     icon: const Icon(Icons.favorite_border, color: Colors.red),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () {},
                   ),
                 ),
               ],
@@ -267,18 +265,15 @@ class DetailsScreen extends StatelessWidget {
                       ),
 
                       SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          FeaturesItems(
-                            name: business.features[0].name,
-                            icon: business.features[0].icon,
-                          ),
-                          // FeaturesItems(
-                          //   text: 'Parking',
-                          //   icon: Icons.local_parking_rounded,
-                          // ),
-                        ],
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: business.features.map((feature) {
+                          return FeaturesItems(
+                            name: feature.name,
+                            icon: feature.icon,
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
