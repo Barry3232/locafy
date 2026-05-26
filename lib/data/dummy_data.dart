@@ -1,6 +1,7 @@
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/models/features_model.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/models/pictures_modle.dart';
 
 List<BusinessModel> businesses = [
   BusinessModel(
@@ -19,6 +20,13 @@ List<BusinessModel> businesses = [
       FeaturesModel(icon: Icons.local_parking, name: 'Parking'),
 
       FeaturesModel(icon: Icons.delivery_dining, name: 'Delivery'),
+    ],
+    picture: [
+      PicturesModel(image: 'assets/images/shoprite.jpg'),
+      PicturesModel(image: 'assets/images/shoprite1.jpg'),
+
+      PicturesModel(image: 'assets/images/food5.jpg'),
+      PicturesModel(image: 'assets/images/shoprite1.jpg'),
     ],
   ),
 
@@ -42,6 +50,12 @@ List<BusinessModel> businesses = [
 
       FeaturesModel(icon: Icons.event_seat, name: 'Indoor Seating'),
     ],
+    picture: [
+      PicturesModel(image: 'assets/images/food3.jpg'),
+      PicturesModel(image: 'assets/images/food4.jpg'),
+      PicturesModel(image: 'assets/images/food.jpg'),
+      PicturesModel(image: 'assets/images/food5.jpg'),
+    ],
   ),
 
   BusinessModel(
@@ -62,6 +76,13 @@ List<BusinessModel> businesses = [
       FeaturesModel(icon: Icons.family_restroom, name: 'Family Friendly'),
 
       FeaturesModel(icon: Icons.access_time, name: '24/7 Service'),
+    ],
+    picture: [
+      PicturesModel(image: 'assets/images/kilimanjaro.jpg'),
+      PicturesModel(image: 'assets/images/food5.jpg'),
+      PicturesModel(image: 'assets/images/food4.jpg'),
+      PicturesModel(image: 'assets/images/food.jpg'),
+      PicturesModel(image: 'assets/images/food3.jpg'),
     ],
   ),
 
@@ -85,6 +106,7 @@ List<BusinessModel> businesses = [
 
       FeaturesModel(icon: Icons.payments, name: 'POS Payment'),
     ],
+    picture: [PicturesModel(image: 'assets/images/The Boss store.jpg')],
   ),
 
   BusinessModel(
@@ -109,6 +131,13 @@ List<BusinessModel> businesses = [
 
       FeaturesModel(icon: Icons.wifi, name: 'Free WiFi'),
     ],
+    picture: [
+      PicturesModel(image: 'assets/images/resort.jpg'),
+      PicturesModel(image: 'assets/images/resorts.jpg'),
+      PicturesModel(image: 'assets/images/resorts1.jpg'),
+      PicturesModel(image: 'assets/images/food.jpg'),
+      PicturesModel(image: 'assets/images/food5.jpg'),
+    ],
   ),
 
   BusinessModel(
@@ -126,6 +155,13 @@ List<BusinessModel> businesses = [
       FeaturesModel(icon: Icons.hotel, name: 'Luxury Rooms'),
       FeaturesModel(icon: Icons.restaurant, name: 'Restaurant'),
       FeaturesModel(icon: Icons.sports_bar, name: 'Lounge Bar'),
+    ],
+    picture: [
+      PicturesModel(image: 'assets/images/resort1.jpg'),
+      PicturesModel(image: 'assets/images/resorts2.jpg'),
+      PicturesModel(image: 'assets/images/resorts3.jpg'),
+      PicturesModel(image: 'assets/images/food.jpg'),
+      PicturesModel(image: 'assets/images/food5.jpg'),
     ],
   ),
 
@@ -145,6 +181,7 @@ List<BusinessModel> businesses = [
       FeaturesModel(icon: Icons.style, name: 'Hair Styling'),
       FeaturesModel(icon: Icons.spa, name: 'Skincare Services'),
     ],
+    picture: [PicturesModel(image: 'assets/images/Barbershop.jpg')],
   ),
 
   BusinessModel(
@@ -163,5 +200,6 @@ List<BusinessModel> businesses = [
       FeaturesModel(icon: Icons.discount, name: 'Discount Sales'),
       FeaturesModel(icon: Icons.payments, name: 'POS Payment'),
     ],
+    picture: [PicturesModel(image: 'assets/images/cloths.jpg')],
   ),
 ];

@@ -1,4 +1,5 @@
 import 'package:locafy/models/features_model.dart';
+import 'package:locafy/models/pictures_modle.dart';
 
 class BusinessModel {
   final String name;
@@ -10,6 +11,7 @@ class BusinessModel {
   final String description;
   final String location;
   final List<FeaturesModel> features;
+  final List<PicturesModel> picture;
 
   BusinessModel({
     required this.name,
@@ -21,5 +23,6 @@ class BusinessModel {
     required this.reviewsCount,
     required this.description,
     required this.features,
+    required this.picture,
   });
 }

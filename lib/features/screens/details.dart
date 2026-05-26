@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
+import 'package:locafy/widgets/details_section/picture_items.dart';
 
 class DetailsScreen extends StatelessWidget {
   final BusinessModel business;
@@ -274,6 +277,64 @@ class DetailsScreen extends StatelessWidget {
                             icon: feature.icon,
                           );
                         }).toList(),
+                      ),
+
+                      SizedBox(height: 45),
+
+                      Row(
+                        children: [
+                          Text(
+                            'Photo',
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(2, 2),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () {},
+                            child: Text(
+                              'See All',
+                              style: TextStyle(
+                                color: Color(0xFF0A4FD6),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 10),
+
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: business.picture.map((pictures) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: PictureItems(
+                                image: pictures.image,
+                                ontap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => FullImageScreen(
+                                        image: pictures.image,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ],
                   ),
