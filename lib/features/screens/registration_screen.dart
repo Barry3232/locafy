@@ -35,7 +35,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String? _errorMessage;
-  final bool _isInvalid = false;
 
   @override
   void initState() {

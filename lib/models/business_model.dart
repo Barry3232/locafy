@@ -13,6 +13,12 @@ class BusinessModel {
   final List<FeaturesModel> features;
   final List<PicturesModel> picture;
 
+  final int fiveStar;
+  final int fourStar;
+  final int threeStar;
+  final int twoStar;
+  final int oneStar;
+
   BusinessModel({
     required this.name,
     required this.image,
@@ -24,5 +30,10 @@ class BusinessModel {
     required this.description,
     required this.features,
     required this.picture,
+    required this.fiveStar,
+    required this.fourStar,
+    required this.threeStar,
+    required this.twoStar,
+    required this.oneStar,
   });
 }

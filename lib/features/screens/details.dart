@@ -1,15 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
 import 'package:locafy/widgets/details_section/picture_items.dart';
+import 'package:locafy/widgets/details_section/review_card.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   final BusinessModel business;
+
   const DetailsScreen({super.key, required this.business});
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  Widget ratingRow({
+    required int star,
+    required int value,
+    required int total,
+  }) {
+    return Row(
+      children: [
+        Text('$star'),
+
+        const SizedBox(width: 4),
+
+        const Icon(Icons.star, size: 14, color: Colors.orange),
+
+        const SizedBox(width: 8),
+
+        Expanded(
+          child: LinearProgressIndicator(
+            value: value / total,
+            backgroundColor: Colors.grey.shade300,
+            color: Colors.orange,
+            minHeight: 6,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        Text(value.toString()),
+      ],
+    );
+  }
+
+  bool showAllReviews = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +60,7 @@ class DetailsScreen extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(business.image),
+                image: AssetImage(widget.business.image),
                 fit: BoxFit.cover,
               ),
             ),
@@ -76,7 +115,7 @@ class DetailsScreen extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            business.name,
+                            widget.business.name,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -97,14 +136,14 @@ class DetailsScreen extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            business.category,
+                            widget.business.category,
                             style: TextStyle(color: Colors.grey),
                           ),
                           SizedBox(width: 5),
                           CircleAvatar(radius: 3),
                           SizedBox(width: 5),
                           Text(
-                            business.distance,
+                            widget.business.distance,
                             style: TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -117,7 +156,7 @@ class DetailsScreen extends StatelessWidget {
                           Icon(Icons.star, size: 16, color: Colors.orange),
                           SizedBox(width: 4),
                           Text(
-                            "${business.rating} (${business.reviewsCount} reviews)",
+                            "${widget.business.rating} (${widget.business.reviewsCount} reviews)",
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.black,
@@ -197,13 +236,13 @@ class DetailsScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  business.location,
+                                  widget.business.location,
                                   style: TextStyle(fontSize: 13),
                                 ),
                                 SizedBox(height: 5),
 
                                 Text(
-                                  business.distance,
+                                  widget.business.distance,
                                   style: TextStyle(color: Colors.grey),
                                 ),
                               ],
@@ -232,7 +271,7 @@ class DetailsScreen extends StatelessWidget {
                             SizedBox(width: 8),
 
                             Text(
-                              business.location,
+                              widget.business.location,
                               style: TextStyle(fontSize: 13),
                             ),
 
@@ -255,7 +294,7 @@ class DetailsScreen extends StatelessWidget {
 
                       SizedBox(height: 10),
 
-                      Text(business.description),
+                      Text(widget.business.description),
 
                       SizedBox(height: 45),
 
@@ -271,7 +310,7 @@ class DetailsScreen extends StatelessWidget {
                       Wrap(
                         spacing: 10,
                         runSpacing: 10,
-                        children: business.features.map((feature) {
+                        children: widget.business.features.map((feature) {
                           return FeaturesItems(
                             name: feature.name,
                             icon: feature.icon,
@@ -316,7 +355,7 @@ class DetailsScreen extends StatelessWidget {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: business.picture.map((pictures) {
+                          children: widget.business.picture.map((pictures) {
                             return Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: PictureItems(
@@ -334,6 +373,171 @@ class DetailsScreen extends StatelessWidget {
                               ),
                             );
                           }).toList(),
+                        ),
+                      ),
+
+                      SizedBox(height: 45),
+
+                      Row(
+                        children: [
+                          Text(
+                            'Reviews',
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(2, 2),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                showAllReviews = !showAllReviews;
+                              });
+                            },
+                            child: showAllReviews
+                                ? Text(
+                                    'See Less',
+                                    style: TextStyle(
+                                      color: Color(0xFF0A4FD6),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : Text(
+                                    'See All',
+                                    style: TextStyle(
+                                      color: Color(0xFF0A4FD6),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                widget.business.rating,
+                                style: TextStyle(fontSize: 28),
+                              ),
+
+                              SizedBox(height: 6),
+
+                              Row(
+                                children: List.generate(
+                                  5,
+                                  (index) => Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 6),
+
+                              Text(
+                                '(${widget.business.reviewsCount} Rewies)',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 40),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                ratingRow(
+                                  star: 5,
+                                  value: widget.business.fiveStar,
+                                  total: widget.business.reviewsCount,
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                ratingRow(
+                                  star: 4,
+                                  value: widget.business.fourStar,
+                                  total: widget.business.reviewsCount,
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                ratingRow(
+                                  star: 3,
+                                  value: widget.business.threeStar,
+                                  total: widget.business.reviewsCount,
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                ratingRow(
+                                  star: 2,
+                                  value: widget.business.twoStar,
+                                  total: widget.business.reviewsCount,
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                ratingRow(
+                                  star: 1,
+                                  value: widget.business.oneStar,
+                                  total: widget.business.reviewsCount,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: 20),
+
+                      showAllReviews
+                          ? reviewCard(
+                              text:
+                                  'Great food, amazing emvironment and excellent customer service. Definitely coming back!',
+                            )
+                          : SizedBox(),
+
+                      SizedBox(height: 10),
+
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF0A4FD6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.bookmark_outline,
+                                color: Colors.white,
+                                size: 26,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Save Place',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
