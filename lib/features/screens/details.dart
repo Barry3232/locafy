@@ -203,8 +203,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             Spacer(),
                             EnquiryItems(
                               onTap: () {},
-                              icon: Icons.language,
-                              text: 'Website',
+                              icon: Icons.message_outlined,
+                              text: 'Message',
                             ),
                             Spacer(),
                             EnquiryItems(

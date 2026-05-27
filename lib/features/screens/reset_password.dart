@@ -67,7 +67,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
-                            'Welcome Back!',
+                            'Forgot Password',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -119,6 +119,30 @@ class _ResetPasswordState extends State<ResetPassword> {
                                 child: const Text("Resend"),
                               ),
                             ],
+                          ),
+                          SizedBox(height: 10),
+
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              height: 50,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF2C56C0),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+
+                              child: Center(
+                                child: Text(
+                                  'Send Link',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),

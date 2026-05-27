@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/home.dart';
 import 'package:locafy/features/screens/profile.dart';
+import 'package:locafy/features/screens/publish.dart';
 
 class NavBarScreen extends StatefulWidget {
   const NavBarScreen({super.key});
@@ -16,7 +17,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
   final List<Widget> _screens = [
     HomeScreen(), // Home Screen
     Container(color: Colors.green), // Search Screen
-    Container(color: Colors.blue), // Messages Screen
+    PublishScreen(), // Messages Screen
     Container(color: Colors.orange), // Notifications Screen
     ProfileScreen(), // Profile Screen
   ];
