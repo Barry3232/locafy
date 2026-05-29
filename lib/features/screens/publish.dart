@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/widgets/publish_section/add_picture.dart';
 import 'package:locafy/widgets/publish_section/features_amenities.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class PublishScreen extends StatefulWidget {
   const PublishScreen({super.key});
@@ -13,6 +15,41 @@ class _PublishScreenState extends State<PublishScreen> {
   String? selectedCategory;
   String? selectedBusinessType;
   String? selectedTime;
+
+  bool _isLoading = false;
+
+  Future<void> imagePicker(int index) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      final image = ImagePicker();
+      final picked = await image.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      if (picked == null) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      setState(() {
+        selectedImages[index] = File(picked.path);
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      print("Error picking image: $e");
+    }
+  }
+
+  List<File?> selectedImages = [null, null, null, null, null];
 
   final List<String> categories = [
     'Restaurant',
@@ -91,15 +128,55 @@ class _PublishScreenState extends State<PublishScreen> {
 
                 child: Row(
                   children: [
-                    PublisherPhoto(),
+                    PublisherPhoto(
+                      image: selectedImages[0],
+                      onTap: () => imagePicker(0),
+                      onRemove: () {
+                        setState(() {
+                          selectedImages[0] = null;
+                        });
+                      },
+                    ),
                     SizedBox(width: 10),
-                    PublisherPhoto(),
+                    PublisherPhoto(
+                      image: selectedImages[1],
+                      onTap: () => imagePicker(1),
+                      onRemove: () {
+                        setState(() {
+                          selectedImages[1] = null;
+                        });
+                      },
+                    ),
                     SizedBox(width: 10),
-                    PublisherPhoto(),
+                    PublisherPhoto(
+                      image: selectedImages[2],
+                      onTap: () => imagePicker(2),
+                      onRemove: () {
+                        setState(() {
+                          selectedImages[2] = null;
+                        });
+                      },
+                    ),
                     SizedBox(width: 10),
-                    PublisherPhoto(),
+                    PublisherPhoto(
+                      image: selectedImages[3],
+                      onTap: () => imagePicker(3),
+                      onRemove: () {
+                        setState(() {
+                          selectedImages[3] = null;
+                        });
+                      },
+                    ),
                     SizedBox(width: 10),
-                    PublisherPhoto(),
+                    PublisherPhoto(
+                      image: selectedImages[4],
+                      onTap: () => imagePicker(4),
+                      onRemove: () {
+                        setState(() {
+                          selectedImages[4] = null;
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),
