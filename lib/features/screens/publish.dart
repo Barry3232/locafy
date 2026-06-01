@@ -3,6 +3,7 @@ import 'package:locafy/widgets/publish_section/add_picture.dart';
 import 'package:locafy/widgets/publish_section/features_amenities.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:locafy/widgets/publish_section/map_section.dart';
 
 class PublishScreen extends StatefulWidget {
   const PublishScreen({super.key});
@@ -16,7 +17,12 @@ class _PublishScreenState extends State<PublishScreen> {
   String? selectedBusinessType;
   String? selectedTime;
 
+  String? selectedAddress;
+  double? selectedLatitude;
+  double? selectedLongitude;
   bool _isLoading = false;
+
+  final FocusNode locationFocusNode = FocusNode();
 
   Future<void> imagePicker(int index) async {
     try {
@@ -77,6 +83,22 @@ class _PublishScreenState extends State<PublishScreen> {
     '12pm - 9pm',
     '24/7',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    locationFocusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    locationFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -415,25 +437,54 @@ class _PublishScreenState extends State<PublishScreen> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               SizedBox(height: 10),
-              TextFormField(
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.location_on_outlined),
-                  suffixIcon: Icon(Icons.navigate_next_outlined),
-                  hintText: 'Select on map',
-                  fillColor: Colors.white,
-                  filled: true,
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 11,
-                    horizontal: 15,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: Colors.grey, width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide(color: Color(0xFF0A4FD6), width: 2),
+              Focus(
+                focusNode: locationFocusNode,
+                child: GestureDetector(
+                  onTap: () async {
+                    locationFocusNode.requestFocus();
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MapSection()),
+                    );
+
+                    if (result != null) {
+                      setState(() {
+                        selectedAddress = result["address"];
+                        selectedLatitude = result["latitude"];
+                        selectedLongitude = result["longitude"];
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: locationFocusNode.hasFocus
+                            ? const Color(0xFF0A4FD6)
+                            : Colors.grey,
+                        width: locationFocusNode.hasFocus ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.location_on_outlined),
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: Text(
+                            selectedAddress ?? "Select on map",
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+
+                        const Icon(Icons.navigate_next_outlined),
+                      ],
+                    ),
                   ),
                 ),
               ),

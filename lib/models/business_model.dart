@@ -7,6 +7,9 @@ class BusinessModel {
   final String category;
   final String distance;
   final String rating;
+  final String? address;
+  final double? latitude;
+  final double? longitude;
   final int reviewsCount;
   final String description;
   final String location;
@@ -26,6 +29,9 @@ class BusinessModel {
     required this.distance,
     required this.rating,
     required this.location,
+    this.address,
+    this.latitude,
+    this.longitude,
     required this.reviewsCount,
     required this.description,
     required this.features,
