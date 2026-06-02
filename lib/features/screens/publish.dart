@@ -444,7 +444,12 @@ class _PublishScreenState extends State<PublishScreen> {
                     locationFocusNode.requestFocus();
                     final result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const MapSection()),
+                      MaterialPageRoute(
+                        builder: (_) => MapSection(
+                          initialLatitude: selectedLatitude,
+                          initialLongitude: selectedLongitude,
+                        ),
+                      ),
                     );
 
                     if (result != null) {
