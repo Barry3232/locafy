@@ -6,10 +6,16 @@ class PublisherPhoto extends StatelessWidget {
   final File? image;
   final VoidCallback onTap;
   final VoidCallback onRemove;
+  final String text;
+  final double height;
+  final double width;
 
   const PublisherPhoto({
     super.key,
     this.image,
+    required this.height,
+    required this.width,
+    required this.text,
     required this.onTap,
     required this.onRemove,
   });
@@ -27,15 +33,15 @@ class PublisherPhoto extends StatelessWidget {
                 color: Colors.grey,
               ),
               child: Container(
-                height: 85,
-                width: 85,
+                height: height,
+                width: width,
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.add_a_photo_outlined),
                     SizedBox(height: 10),
-                    Text("Add photo"),
+                    Text(text),
                   ],
                 ),
               ),
@@ -44,8 +50,8 @@ class PublisherPhoto extends StatelessWidget {
         : Stack(
             children: [
               Container(
-                height: 85,
-                width: 85,
+                height: height,
+                width: width,
                 clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
@@ -62,7 +68,7 @@ class PublisherPhoto extends StatelessWidget {
                   child: Container(
                     padding: EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
+                      color: Colors.black.withValues(alpha: 0.6),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.close, color: Colors.white, size: 16),

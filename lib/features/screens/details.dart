@@ -71,7 +71,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.black.withOpacity(0.4),
+                  backgroundColor: Colors.black.withValues(alpha: 0.4),
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () {
@@ -169,7 +169,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           Container(
                             height: 16,
                             width: 1,
-                            color: Colors.grey.withOpacity(0.5),
+                            color: Colors.grey.withValues(alpha: 0.5),
                           ),
                           SizedBox(width: 10),
                           Text(
@@ -223,7 +223,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha: 0.2),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -262,7 +262,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          color: Colors.grey.withOpacity(0.2),
+                          color: Colors.grey.withValues(alpha: 0.2),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,

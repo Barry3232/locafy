@@ -9,7 +9,7 @@ Widget reviewCard({required String text}) {
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 5),
+          BoxShadow(color: Colors.grey.withValues(alpha: 0.5), blurRadius: 5),
         ],
       ),
       child: Column(

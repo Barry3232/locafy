@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
-class FeaturesAmenities extends StatefulWidget {
+class FeaturesAmenities extends StatelessWidget {
   final String name;
   final IconData icon;
+  final bool isSelected;
+  final ValueChanged<bool> onChanged;
 
-  const FeaturesAmenities({super.key, required this.name, required this.icon});
-
-  @override
-  State<FeaturesAmenities> createState() => _FeaturesAmenitiesState();
-}
-
-class _FeaturesAmenitiesState extends State<FeaturesAmenities> {
-  bool _isSelected = false;
+  const FeaturesAmenities({
+    super.key,
+    required this.name,
+    required this.icon,
+    required this.isSelected,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class _FeaturesAmenitiesState extends State<FeaturesAmenities> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
 
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.15),
+        color: Colors.grey.withValues(alpha: 0.15),
 
         borderRadius: BorderRadius.circular(14),
 
@@ -31,29 +32,25 @@ class _FeaturesAmenitiesState extends State<FeaturesAmenities> {
         mainAxisAlignment: MainAxisAlignment.start,
 
         children: [
-          Icon(widget.icon, color: const Color(0xFF0A4FD6), size: 14),
+          Icon(icon, color: const Color(0xFF0A4FD6), size: 14),
 
           const SizedBox(width: 6),
 
           Text(
-            widget.name,
+            name,
             style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
           ),
 
           Transform.scale(
             scale: 0.8,
             child: Checkbox(
-              value: _isSelected,
+              value: isSelected,
 
               visualDensity: VisualDensity.compact,
 
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
 
-              onChanged: (value) {
-                setState(() {
-                  _isSelected = value!;
-                });
-              },
+              onChanged: (value) => onChanged(value!),
             ),
           ),
         ],

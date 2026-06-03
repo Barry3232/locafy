@@ -16,7 +16,10 @@ class RecommendedItems extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(color: Colors.grey.withOpacity(0.5), blurRadius: 3),
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.5),
+                blurRadius: 3,
+              ),
             ],
           ),
           child: Padding(

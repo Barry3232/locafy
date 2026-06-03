@@ -201,7 +201,7 @@ class _MapSectionState extends State<MapSection> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: Colors.red.withOpacity(0.1),
+                        backgroundColor: Colors.red.withValues(alpha: 0.1),
                         child: Icon(
                           Icons.location_pin,
                           size: 30,
@@ -247,7 +247,7 @@ class _MapSectionState extends State<MapSection> {
                     width: double.infinity,
 
                     decoration: BoxDecoration(
-                      color: Color(0xFF0A4FD6).withOpacity(0.1),
+                      color: Color(0xFF0A4FD6).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Padding(
@@ -272,7 +272,7 @@ class _MapSectionState extends State<MapSection> {
                           Container(
                             height: 20,
                             width: 1,
-                            color: Colors.blue.withOpacity(0.5),
+                            color: Colors.blue.withValues(alpha: 0.5),
                           ),
                           Column(
                             children: [

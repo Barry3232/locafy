@@ -24,7 +24,7 @@ class EnquiryItems extends StatelessWidget {
             onTap: onTap,
             child: CircleAvatar(
               radius: 27,
-              backgroundColor: Colors.grey.withOpacity(0.2),
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               child: Icon(icon, color: Color(0xFF0A4FD6), size: 28),
             ),
           ),

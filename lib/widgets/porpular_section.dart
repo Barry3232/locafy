@@ -48,7 +48,7 @@ class PopularItems extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.4),
+                              color: Colors.black.withValues(alpha: 0.4),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -68,7 +68,7 @@ class PopularItems extends StatelessWidget {
                         top: 10,
                         bottom: 10,
                       ),
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
 
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

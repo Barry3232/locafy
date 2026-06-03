@@ -20,7 +20,7 @@ class FullImageScreen extends StatelessWidget {
             top: 50,
             left: 20,
             child: CircleAvatar(
-              backgroundColor: Colors.black.withOpacity(0.5),
+              backgroundColor: Colors.black.withValues(alpha: 0.5),
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);

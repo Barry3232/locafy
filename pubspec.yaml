@@ -45,6 +45,7 @@ dependencies:
   geolocator: ^14.0.1
   flutter_map: ^8.1.1
   latlong2: ^0.9.1
+  firebase_storage: ^13.4.2
 
 dev_dependencies:
   flutter_test:
