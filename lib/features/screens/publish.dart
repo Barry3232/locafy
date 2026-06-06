@@ -99,6 +99,7 @@ class _PublishScreenState extends State<PublishScreen> {
   }
 
   List<String> selectedAmenities = [];
+
   final amenities = [
     ('Wi-Fi', Icons.wifi),
     ('Parking', Icons.local_parking_outlined),
@@ -111,6 +112,7 @@ class _PublishScreenState extends State<PublishScreen> {
     ('Air Conditioning', Icons.ac_unit_outlined),
   ];
   List<File?> selectedImages = [null, null, null, null, null];
+  File? selectedCoverImage;
 
   Future<void> pickCoverPhoto() async {
     final image = ImagePicker();
@@ -215,7 +217,7 @@ class _PublishScreenState extends State<PublishScreen> {
                   width: double.infinity,
                   text: "Add cover photo",
                   image: coverPhoto,
-                  onTap: () => pickCoverPhoto,
+                  onTap: () => pickCoverPhoto(),
                   onRemove: () {
                     setState(() {
                       coverPhoto = null;
