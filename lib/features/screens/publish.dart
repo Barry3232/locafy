@@ -22,8 +22,8 @@ class _PublishScreenState extends State<PublishScreen> {
   String? selectedAddress;
   double? selectedLatitude;
   double? selectedLongitude;
-  bool _isLoading = false;
   bool isSelected = false;
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _businessNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -112,7 +112,6 @@ class _PublishScreenState extends State<PublishScreen> {
     ('Air Conditioning', Icons.ac_unit_outlined),
   ];
   List<File?> selectedImages = [null, null, null, null, null];
-  File? selectedCoverImage;
 
   Future<void> pickCoverPhoto() async {
     final image = ImagePicker();

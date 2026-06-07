@@ -338,6 +338,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                             return;
                                           }
 
+                                          final userNameExists =
+                                              await FirebaseFirestore.instance
+                                                  .collection('users')
+                                                  .where(
+                                                    'username',
+                                                    isEqualTo:
+                                                        _userNameController.text
+                                                            .trim(),
+                                                  )
+                                                  .get();
+
+                                          if (userNameExists.docs.isNotEmpty) {
+                                            setState(() {
+                                              _errorMessage =
+                                                  'Username already exists';
+                                              _isLoading = false;
+                                            });
+                                            return;
+                                          }
+
                                           final emailExists =
                                               await FirebaseFirestore.instance
                                                   .collection('users')

@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Timer? _timer;
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isSuccess = false;
   String? _errorMessage;
   bool get _loginButtonStatus {
     return _emailController.text.isNotEmpty &&
@@ -170,16 +171,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: EdgeInsets.all(12),
                                 margin: EdgeInsets.only(bottom: 15),
                                 decoration: BoxDecoration(
-                                  color: Colors.red.shade50,
+                                  color: _isSuccess
+                                      ? Colors.green.shade50
+                                      : Colors.red.shade50,
                                   border: Border.all(
-                                    color: Colors.red.shade300,
+                                    color: _isSuccess
+                                        ? Colors.green.shade300
+                                        : Colors.red.shade300,
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   _errorMessage!,
                                   style: TextStyle(
-                                    color: Colors.red.shade700,
+                                    color: _isSuccess
+                                        ? Colors.green.shade700
+                                        : Colors.red.shade700,
                                     fontSize: 14,
                                   ),
                                 ),
@@ -215,9 +222,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                           if (error == null &&
                                               context.mounted) {
                                             setState(() {
+                                              _isSuccess = true;
                                               _errorMessage =
                                                   'Login Successful';
                                             });
+                                            await Future.delayed(
+                                              Duration(seconds: 2),
+                                            );
+
+                                            if (!mounted) return;
                                             Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(
@@ -226,11 +239,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                             );
                                           } else {
                                             setState(() {
+                                              _isSuccess = false;
                                               _errorMessage = error;
                                             });
                                           }
                                         } catch (e) {
                                           setState(() {
+                                            _isSuccess = false;
                                             _errorMessage =
                                                 'Something went wrong';
                                           });

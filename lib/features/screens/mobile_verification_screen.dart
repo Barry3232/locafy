@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/verify_number.dart';
-import 'package:locafy/features/services/phone_auth_service.dart';
+import 'package:locafy/features/services/auth_services.dart';
+// import 'package:locafy/features/services/phone_auth_service.dart';
 import 'dart:async';
 
 class MobileVerification extends StatefulWidget {
@@ -210,8 +211,8 @@ class _MobileVerificationState extends State<MobileVerification> {
                                 }
 
                                 try {
-                                  final phoneAuthService = PhoneAuthService();
-                                  await phoneAuthService.sendOtp(
+                                  final authService = AuthServices();
+                                  await authService.sendOtp(
                                     phoneNumber:
                                         '+234${_phoneNumberController.text.trim()}',
                                     onCodeSent: (verificationId) {
