@@ -612,36 +612,38 @@ class _VerifyNumberState extends State<VerifyNumber> {
                 ),
                 if (_isSuccess)
                   Positioned.fill(
-                    child: Container(
-                      color: Colors.black54,
-                      child: Center(
-                        child: Container(
-                          width: 260,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 70,
-                              ),
-
-                              SizedBox(height: 15),
-
-                              Text(
-                                'Account Created Successfully',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                    child: Center(
+                      child: Container(
+                        color: Colors.black54,
+                        child: Center(
+                          child: Container(
+                            width: 260,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 70,
                                 ),
-                              ),
-                            ],
+
+                                SizedBox(height: 15),
+
+                                Text(
+                                  'Account Created Successfully',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

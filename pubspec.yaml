@@ -46,6 +46,7 @@ dependencies:
   flutter_map: ^8.1.1
   latlong2: ^0.9.1
   firebase_storage: ^13.4.2
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
