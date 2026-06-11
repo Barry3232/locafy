@@ -143,7 +143,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           CircleAvatar(radius: 3),
                           SizedBox(width: 5),
                           Text(
-                            widget.business.distance,
+                            widget.business.distance!,
                             style: TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -242,7 +242,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 SizedBox(height: 5),
 
                                 Text(
-                                  widget.business.distance,
+                                  widget.business.distance!,
                                   style: TextStyle(color: Colors.grey),
                                 ),
                               ],
@@ -426,7 +426,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           Column(
                             children: [
                               Text(
-                                widget.business.rating,
+                                widget.business.rating!,
                                 style: TextStyle(fontSize: 28),
                               ),
 
@@ -457,40 +457,40 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               children: [
                                 ratingRow(
                                   star: 5,
-                                  value: widget.business.fiveStar,
-                                  total: widget.business.reviewsCount,
+                                  value: widget.business.fiveStar!,
+                                  total: widget.business.reviewsCount!,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 4,
-                                  value: widget.business.fourStar,
-                                  total: widget.business.reviewsCount,
+                                  value: widget.business.fourStar!,
+                                  total: widget.business.reviewsCount!,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 3,
-                                  value: widget.business.threeStar,
-                                  total: widget.business.reviewsCount,
+                                  value: widget.business.threeStar!,
+                                  total: widget.business.reviewsCount!,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 2,
-                                  value: widget.business.twoStar,
-                                  total: widget.business.reviewsCount,
+                                  value: widget.business.twoStar!,
+                                  total: widget.business.reviewsCount!,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 1,
-                                  value: widget.business.oneStar,
-                                  total: widget.business.reviewsCount,
+                                  value: widget.business.oneStar!,
+                                  total: widget.business.reviewsCount!,
                                 ),
                               ],
                             ),

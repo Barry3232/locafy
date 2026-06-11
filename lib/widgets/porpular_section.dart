@@ -96,7 +96,7 @@ class PopularItems extends StatelessWidget {
                               SizedBox(width: 4),
 
                               Text(
-                                business.distance,
+                                business.distance!,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,
@@ -110,7 +110,7 @@ class PopularItems extends StatelessWidget {
                               Icon(Icons.star, size: 14, color: Colors.orange),
                               SizedBox(width: 4),
                               Text(
-                                business.rating,
+                                business.rating!,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.black,

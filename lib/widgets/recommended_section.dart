@@ -72,7 +72,7 @@ class RecommendedItems extends StatelessWidget {
                             SizedBox(width: 4),
 
                             Text(
-                              business.distance,
+                              business.distance!,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey,
@@ -87,7 +87,7 @@ class RecommendedItems extends StatelessWidget {
                             Icon(Icons.star, color: Colors.black, size: 14),
                             SizedBox(width: 4),
                             Text(
-                              business.rating,
+                              business.rating!,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey,

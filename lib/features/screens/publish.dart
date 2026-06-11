@@ -371,6 +371,10 @@ class _PublishScreenState extends State<PublishScreen> {
                     SizedBox(height: 10),
 
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (value) {
+                        _formKey.currentState?.validate();
+                      },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Business name is required";
@@ -564,6 +568,10 @@ class _PublishScreenState extends State<PublishScreen> {
                     ),
                     SizedBox(height: 10),
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (value) {
+                        _formKey.currentState?.validate();
+                      },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Description is required";
@@ -608,6 +616,10 @@ class _PublishScreenState extends State<PublishScreen> {
                     ),
                     SizedBox(height: 10),
                     TextFormField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: (value) {
+                        _formKey.currentState?.validate();
+                      },
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Phone number is required";
@@ -856,11 +868,6 @@ class _PublishScreenState extends State<PublishScreen> {
                               .doc();
 
                           final businessId = docRef.id;
-
-                          // final coverPhotoUrl = await uploadCoverPhoto(
-                          //   businessId,
-                          //   coverPhoto!,
-                          // );
                           final coverPhotoUrl = await uploadToCloudinary(
                             coverPhoto!,
                           );
@@ -905,36 +912,18 @@ class _PublishScreenState extends State<PublishScreen> {
                             'createdAt': FieldValue.serverTimestamp(),
                           });
 
-                          if (!mounted) return;
+                          setState(() {
+                            _isSuccess = true;
+                          });
 
-                          await Future.delayed(Duration(seconds: 2));
+                          await Future.delayed(const Duration(seconds: 3));
+
+                          if (!mounted) return;
 
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(builder: (_) => NavBarScreen()),
                           );
-
-                          // await FirebaseFirestore.instance
-                          //     .collection('Businesses')
-                          //     .add({
-                          //       'businessName': _businessNameController.text.trim(),
-                          //       'category': selectedCategory,
-                          //       'businessType': selectedBusinessType,
-                          //       'description': _descriptionController.text.trim(),
-                          //       'phoneNumber': _phoneNumberController.text.trim(),
-                          //       'address': selectedAddress,
-                          //       'latitude': selectedLatitude,
-                          //       'longitude': selectedLongitude,
-                          //       'openingHours': selectedTime,
-                          //       'amenities': selectedAmenities,
-                          //       'createdAt': FieldValue.serverTimestamp(),
-                          //     });
-
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   const SnackBar(
-                          //     content: Text("Business published successfully"),
-                          //   ),
-                          // );
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -987,42 +976,42 @@ class _PublishScreenState extends State<PublishScreen> {
 
                 if (_isSuccess)
                   OnSuccess(name: 'Business published Successfully'),
-                // Center(
-                //   child: Container(
-                //     color: Colors.black54,
-                //     child: Center(
-                //       child: Container(
-                //         width: 260,
-                //         padding: const EdgeInsets.all(20),
-                //         decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(20),
-                //         ),
-                //         child: Column(
-                //           mainAxisSize: MainAxisSize.min,
-                //           children: const [
-                //             Icon(
-                //               Icons.check_circle,
-                //               color: Colors.green,
-                //               size: 70,
-                //             ),
+                Center(
+                  child: Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: Container(
+                        width: 260,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 70,
+                            ),
 
-                //             SizedBox(height: 15),
+                            SizedBox(height: 15),
 
-                //             Text(
-                //               'Publish Successfully',
-                //               textAlign: TextAlign.center,
-                //               style: TextStyle(
-                //                 fontSize: 18,
-                //                 fontWeight: FontWeight.bold,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                            Text(
+                              'Publish Successfully',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
