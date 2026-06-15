@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/data/dummy_data.dart';
 import 'package:locafy/features/screens/details.dart';
+import 'package:locafy/features/screens/popular.dart';
 import 'package:locafy/widgets/category_section.dart';
 import 'package:locafy/widgets/porpular_section.dart';
 import 'package:locafy/widgets/recommended_section.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locafy/widgets/home_section/home_skeleton.dart';
+import 'package:locafy/models/business_model.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,10 +19,74 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  bool _showSkeleton = true;
+  Position? userPosition;
 
   final businessStream = FirebaseFirestore.instance
       .collection('businesses')
       .snapshots();
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation();
+
+    Future.delayed(Duration(seconds: 4), () {
+      if (mounted) {
+        setState(() {
+          _showSkeleton = false;
+        });
+      }
+    });
+  }
+
+  Future<void> getUserLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+    userPosition = await Geolocator.getCurrentPosition();
+
+    setState(() {});
+  }
+
+  double getDistance(BusinessModel business) {
+    if (userPosition == null ||
+        business.latitude == null ||
+        business.longitude == null) {
+      return 0;
+    }
+
+    return Geolocator.distanceBetween(
+      userPosition!.latitude,
+      userPosition!.longitude,
+      business.latitude!,
+      business.longitude!,
+    );
+  }
+
+  String formatDistance(Position userPosition, BusinessModel business) {
+    if (business.latitude == null || business.longitude == null) {
+      return business.distanc ?? '';
+    }
+
+    final meters = Geolocator.distanceBetween(
+      userPosition.latitude,
+      userPosition.longitude,
+      business.latitude!,
+      business.longitude!,
+    );
+
+    if (meters < 1000) {
+      return '${meters.round()} m';
+    }
+
+    return '${(meters / 1000).toStringAsFixed(1)} km';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +160,22 @@ class _HomeScreenState extends State<HomeScreen> {
       body: StreamBuilder(
         stream: businessStream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (_showSkeleton ||
+              snapshot.connectionState == ConnectionState.waiting) {
             return HomeSkeleton();
           }
-          Future.delayed(Duration(seconds: 4));
-
           final firestoreDocs = snapshot.data?.docs ?? [];
           print("Firestore businesses: ${firestoreDocs.length}");
+
+          final firestoreBusinesses = firestoreDocs.map((doc) {
+            final data = doc.data();
+            print(data['coverPhotoUrl']);
+            return BusinessModel.fromFirestore(data);
+          }).toList();
+
+          final allBusinesses = [...firestoreBusinesses, ...businesses];
+
+          final popularBusinesses = allBusinesses.take(4).toList();
 
           return SingleChildScrollView(
             child: Padding(
@@ -277,7 +353,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       Spacer(),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PopularBusinessesScreen(
+                                businesses: allBusinesses,
+                              ),
+                            ),
+                          );
+                        },
                         child: Text(
                           'See All',
                           style: TextStyle(color: Color(0xFF0A4FD6)),
@@ -291,68 +376,94 @@ class _HomeScreenState extends State<HomeScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: [
-                        PopularItems(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return DetailsScreen(business: businesses[0]);
-                                },
-                              ),
-                            );
-                          },
-                          business: businesses[0],
-                        ),
-
-                        SizedBox(width: 15),
-
-                        PopularItems(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return DetailsScreen(business: businesses[1]);
-                                },
-                              ),
-                            );
-                          },
-                          business: businesses[1],
-                        ),
-
-                        SizedBox(width: 15),
-
-                        PopularItems(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return DetailsScreen(business: businesses[2]);
-                                },
-                              ),
-                            );
-                          },
-                          business: businesses[2],
-                        ),
-
-                        SizedBox(width: 15),
-
-                        PopularItems(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return DetailsScreen(business: businesses[3]);
-                                },
-                              ),
-                            );
-                          },
-                          business: businesses[3],
-                        ),
-                      ],
+                      children: popularBusinesses.map((business) {
+                        final distanceText = userPosition == null
+                            ? business.distanc ?? ''
+                            : formatDistance(userPosition!, business);
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: PopularItems(
+                            distanceText: distanceText,
+                            business: business,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      DetailsScreen(business: business),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
 
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   child: Row(
+                  //     children: [
+                  //       PopularItems(
+                  //         onTap: () {
+                  //           Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return DetailsScreen(business: businesses[0]);
+                  //               },
+                  //             ),
+                  //           );
+                  //         },
+                  //         business: businesses[0],
+                  //       ),
+
+                  //       SizedBox(width: 15),
+
+                  //       PopularItems(
+                  //         onTap: () {
+                  //           Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return DetailsScreen(business: businesses[1]);
+                  //               },
+                  //             ),
+                  //           );
+                  //         },
+                  //         business: businesses[1],
+                  //       ),
+
+                  //       SizedBox(width: 15),
+
+                  //       PopularItems(
+                  //         onTap: () {
+                  //           Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return DetailsScreen(business: businesses[2]);
+                  //               },
+                  //             ),
+                  //           );
+                  //         },
+                  //         business: businesses[2],
+                  //       ),
+
+                  //       SizedBox(width: 15),
+
+                  //       PopularItems(
+                  //         onTap: () {
+                  //           Navigator.of(context).push(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return DetailsScreen(business: businesses[3]);
+                  //               },
+                  //             ),
+                  //           );
+                  //         },
+                  //         business: businesses[3],
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   SizedBox(height: 20),
 
                   Text(

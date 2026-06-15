@@ -143,7 +143,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           CircleAvatar(radius: 3),
                           SizedBox(width: 5),
                           Text(
-                            widget.business.distance!,
+                            widget.business.distanc!,
                             style: TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -242,7 +242,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 SizedBox(height: 5),
 
                                 Text(
-                                  widget.business.distance!,
+                                  widget.business.distanc!,
                                   style: TextStyle(color: Colors.grey),
                                 ),
                               ],

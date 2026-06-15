@@ -4,8 +4,22 @@ import 'package:locafy/models/business_model.dart';
 class PopularItems extends StatelessWidget {
   final BusinessModel business;
   final VoidCallback? onTap;
+  final String distanceText;
 
-  const PopularItems({super.key, this.onTap, required this.business});
+  const PopularItems({
+    super.key,
+    this.onTap,
+    required this.business,
+    required this.distanceText,
+  });
+
+  ImageProvider getBusinessImage(String image) {
+    if (image.startsWith('http')) {
+      return NetworkImage(image);
+    }
+
+    return AssetImage(image);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +50,7 @@ class PopularItems extends StatelessWidget {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(business.image),
+                              image: getBusinessImage(business.image),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -96,7 +110,7 @@ class PopularItems extends StatelessWidget {
                               SizedBox(width: 4),
 
                               Text(
-                                business.distance!,
+                                distanceText,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,

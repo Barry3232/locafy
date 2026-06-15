@@ -7,7 +7,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:locafy/widgets/publish_section/map_section.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:locafy/widgets/publish_section/on_success.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -918,6 +917,10 @@ class _PublishScreenState extends State<PublishScreen> {
 
                           await Future.delayed(const Duration(seconds: 3));
 
+                          setState(() {
+                            _isSuccess = false;
+                          });
+
                           if (!mounted) return;
 
                           Navigator.pushReplacement(
@@ -974,44 +977,46 @@ class _PublishScreenState extends State<PublishScreen> {
                   ],
                 ),
 
-                if (_isSuccess)
-                  OnSuccess(name: 'Business published Successfully'),
-                Center(
-                  child: Container(
-                    color: Colors.black54,
-                    child: Center(
-                      child: Container(
-                        width: 260,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 70,
-                            ),
-
-                            SizedBox(height: 15),
-
-                            Text(
-                              'Publish Successfully',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                if (_isSuccess == true)
+                  Positioned.fill(
+                    child: OnSuccess(name: 'Published Successfully'),
                   ),
-                ),
+                // Center(
+                //   child: Container(
+                //     color: Colors.black54,
+                //     child: Center(
+                //       child: Container(
+                //         width: 460,
+                //         padding: const EdgeInsets.all(20),
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           borderRadius: BorderRadius.circular(20),
+                //         ),
+                //         child: Column(
+                //           mainAxisSize: MainAxisSize.min,
+                //           children: const [
+                //             Icon(
+                //               Icons.check_circle,
+                //               color: Colors.green,
+                //               size: 70,
+                //             ),
+
+                //             SizedBox(height: 15),
+
+                //             Text(
+                //               'Publish Successfully',
+                //               textAlign: TextAlign.center,
+                //               style: TextStyle(
+                //                 fontSize: 18,
+                //                 fontWeight: FontWeight.bold,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
