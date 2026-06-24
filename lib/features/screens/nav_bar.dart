@@ -12,27 +12,33 @@ class NavBarScreen extends StatefulWidget {
 
 class _NavBarScreenState extends State<NavBarScreen> {
   int _currentIndex = 0;
-  bool _isSelected = false;
 
-  final List<Widget> _screens = [
-    HomeScreen(), // Home Screen
-    Container(color: Colors.green), // Search Screen
-    PublishScreen(), // Messages Screen
-    Container(color: Colors.orange), // Notifications Screen
-    ProfileScreen(), // Profile Screen
-  ];
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      HomeScreen(),
+      Container(color: Colors.green),
+      PublishScreen(),
+      Container(color: Colors.orange),
+      ProfileScreen(),
+    ];
+  }
 
   Widget navItem(IconData icon, int index) {
     return GestureDetector(
       onTap: () => setState(() {
-        if (_currentIndex == index) {
-          _isSelected = !_isSelected;
-        } else {
-          _currentIndex = index;
-          _isSelected = true;
-        }
+        _currentIndex = index;
       }),
       child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _currentIndex == index
+              ? Colors.blue.withOpacity(0.1)
+              : Colors.transparent,
+        ),
         padding: const EdgeInsets.all(10),
         child: Icon(
           icon,
@@ -48,7 +54,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
     return Scaffold(
       extendBody: true,
 
-      body: Stack(children: [_screens[_currentIndex]]),
+      body: IndexedStack(index: _currentIndex, children: _screens),
 
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(16),
@@ -70,34 +76,26 @@ class _NavBarScreenState extends State<NavBarScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             navItem(
-              _isSelected && _currentIndex == 0
-                  ? Icons.home_filled
-                  : Icons.home_outlined,
+              _currentIndex == 0 ? Icons.home_filled : Icons.home_outlined,
               0,
             ),
             navItem(
-              _isSelected && _currentIndex == 1
-                  ? Icons.search
-                  : Icons.search_outlined,
+              _currentIndex == 1 ? Icons.search : Icons.search_outlined,
               1,
             ),
             navItem(
-              _isSelected && _currentIndex == 2
-                  ? Icons.add_circle_outline
-                  : Icons.add_circle_outline,
+              _currentIndex == 2 ? Icons.add_circle : Icons.add_circle_outline,
               2,
             ),
             navItem(
-              _isSelected && _currentIndex == 3
+              _currentIndex == 3
                   ? Icons.message_rounded
                   : Icons.message_outlined,
               3,
             ),
 
             navItem(
-              _isSelected && _currentIndex == 4
-                  ? Icons.person
-                  : Icons.person_outlined,
+              _currentIndex == 4 ? Icons.person : Icons.person_outlined,
               4,
             ),
           ],

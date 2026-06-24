@@ -30,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getUserLocation();
-
-    Future.delayed(Duration(seconds: 4), () {
+    print('HOME INITIALIZED');
+    Future.delayed(Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
           _showSkeleton = false;
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if (meters < 1000) {
-      return '${meters.round()} m';
+      return '${meters.round()} m away';
     }
 
     return '${(meters / 1000).toStringAsFixed(1)} km';
@@ -160,6 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: StreamBuilder(
         stream: businessStream,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            print(snapshot.error);
+
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
           if (_showSkeleton ||
               snapshot.connectionState == ConnectionState.waiting) {
             return HomeSkeleton();
@@ -399,71 +404,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       }).toList(),
                     ),
                   ),
-
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.horizontal,
-                  //   child: Row(
-                  //     children: [
-                  //       PopularItems(
-                  //         onTap: () {
-                  //           Navigator.of(context).push(
-                  //             MaterialPageRoute(
-                  //               builder: (context) {
-                  //                 return DetailsScreen(business: businesses[0]);
-                  //               },
-                  //             ),
-                  //           );
-                  //         },
-                  //         business: businesses[0],
-                  //       ),
-
-                  //       SizedBox(width: 15),
-
-                  //       PopularItems(
-                  //         onTap: () {
-                  //           Navigator.of(context).push(
-                  //             MaterialPageRoute(
-                  //               builder: (context) {
-                  //                 return DetailsScreen(business: businesses[1]);
-                  //               },
-                  //             ),
-                  //           );
-                  //         },
-                  //         business: businesses[1],
-                  //       ),
-
-                  //       SizedBox(width: 15),
-
-                  //       PopularItems(
-                  //         onTap: () {
-                  //           Navigator.of(context).push(
-                  //             MaterialPageRoute(
-                  //               builder: (context) {
-                  //                 return DetailsScreen(business: businesses[2]);
-                  //               },
-                  //             ),
-                  //           );
-                  //         },
-                  //         business: businesses[2],
-                  //       ),
-
-                  //       SizedBox(width: 15),
-
-                  //       PopularItems(
-                  //         onTap: () {
-                  //           Navigator.of(context).push(
-                  //             MaterialPageRoute(
-                  //               builder: (context) {
-                  //                 return DetailsScreen(business: businesses[3]);
-                  //               },
-                  //             ),
-                  //           );
-                  //         },
-                  //         business: businesses[3],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   SizedBox(height: 20),
 
                   Text(

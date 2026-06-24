@@ -842,9 +842,7 @@ class _PublishScreenState extends State<PublishScreen> {
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  "Please add at least one business photo",
-                                ),
+                                content: Text("Please add business photos"),
                               ),
                             );
                             return;
@@ -981,42 +979,6 @@ class _PublishScreenState extends State<PublishScreen> {
                   Positioned.fill(
                     child: OnSuccess(name: 'Published Successfully'),
                   ),
-                // Center(
-                //   child: Container(
-                //     color: Colors.black54,
-                //     child: Center(
-                //       child: Container(
-                //         width: 460,
-                //         padding: const EdgeInsets.all(20),
-                //         decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(20),
-                //         ),
-                //         child: Column(
-                //           mainAxisSize: MainAxisSize.min,
-                //           children: const [
-                //             Icon(
-                //               Icons.check_circle,
-                //               color: Colors.green,
-                //               size: 70,
-                //             ),
-
-                //             SizedBox(height: 15),
-
-                //             Text(
-                //               'Publish Successfully',
-                //               textAlign: TextAlign.center,
-                //               style: TextStyle(
-                //                 fontSize: 18,
-                //                 fontWeight: FontWeight.bold,
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
