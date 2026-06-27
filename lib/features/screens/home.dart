@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getUserLocation();
-    print('HOME INITIALIZED');
+
     Future.delayed(Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
@@ -49,9 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (permission == LocationPermission.deniedForever) {
       return;
     }
+
     userPosition = await Geolocator.getCurrentPosition();
 
     setState(() {});
+    print('USER LAT: ${userPosition!.latitude}');
+    print('USER LNG: ${userPosition!.longitude}');
   }
 
   double getDistance(BusinessModel business) {
@@ -174,6 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
           final firestoreBusinesses = firestoreDocs.map((doc) {
             final data = doc.data();
+            print('BuSINESSess: ${data['businessName']}');
+            print('Latitude: ${data['latitude']}');
+            print('Longitude: ${data['longitude']}');
             print(data['coverPhotoUrl']);
             return BusinessModel.fromFirestore(data);
           }).toList();
@@ -394,8 +400,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      DetailsScreen(business: business),
+                                  builder: (_) => DetailsScreen(
+                                    business: business,
+                                    distanceText: distanceText,
+                                  ),
                                 ),
                               );
                             },
@@ -418,7 +426,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return DetailsScreen(business: businesses[4]);
+                            return DetailsScreen(
+                              business: businesses[4],
+                              distanceText: userPosition == null
+                                  ? businesses[4].distanc ?? ''
+                                  : formatDistance(
+                                      userPosition!,
+                                      businesses[4],
+                                    ),
+                            );
                           },
                         ),
                       );
@@ -433,7 +449,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return DetailsScreen(business: businesses[5]);
+                            return DetailsScreen(
+                              business: businesses[5],
+                              distanceText: userPosition == null
+                                  ? businesses[5].distanc ?? ''
+                                  : formatDistance(
+                                      userPosition!,
+                                      businesses[5],
+                                    ),
+                            );
                           },
                         ),
                       );
@@ -448,7 +472,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return DetailsScreen(business: businesses[6]);
+                            return DetailsScreen(
+                              business: businesses[6],
+                              distanceText: userPosition == null
+                                  ? businesses[6].distanc ?? ''
+                                  : formatDistance(
+                                      userPosition!,
+                                      businesses[6],
+                                    ),
+                            );
                           },
                         ),
                       );
@@ -463,7 +495,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return DetailsScreen(business: businesses[7]);
+                            return DetailsScreen(
+                              business: businesses[7],
+                              distanceText: userPosition == null
+                                  ? businesses[7].distanc ?? ''
+                                  : formatDistance(
+                                      userPosition!,
+                                      businesses[7],
+                                    ),
+                            );
                           },
                         ),
                       );

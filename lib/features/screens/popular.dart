@@ -47,7 +47,10 @@ class PopularBusinessesScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => DetailsScreen(business: business),
+                    builder: (_) => DetailsScreen(
+                      business: business,
+                      distanceText: business.distanc ?? '${business.distance}',
+                    ),
                   ),
                 );
               },

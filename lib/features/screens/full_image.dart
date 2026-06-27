@@ -12,7 +12,9 @@ class FullImageScreen extends StatelessWidget {
         children: [
           Center(
             child: InteractiveViewer(
-              child: Image.asset(image, fit: BoxFit.contain),
+              child: image.startsWith('http')
+                  ? Image.network(image, fit: BoxFit.cover)
+                  : Image.asset(image, fit: BoxFit.cover),
             ),
           ),
 

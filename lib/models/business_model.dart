@@ -1,6 +1,8 @@
 import 'package:locafy/models/features_model.dart';
 import 'package:locafy/models/pictures_modle.dart';
 
+import 'package:locafy/widgets/details_section/amenities_icon.dart';
+
 class BusinessModel {
   final String name;
   final String image;
@@ -14,6 +16,7 @@ class BusinessModel {
   final int? reviewsCount;
   final String description;
   final String location;
+  final String? openingHours;
   final List<FeaturesModel> features;
   final List<PicturesModel> picture;
 
@@ -24,6 +27,7 @@ class BusinessModel {
   final int? oneStar;
 
   BusinessModel({
+    this.openingHours,
     required this.name,
     required this.image,
     required this.category,
@@ -55,14 +59,25 @@ class BusinessModel {
       address: data['address'],
       latitude: data['latitude'],
       longitude: data['longitude'],
+      openingHours: data['openingHours'] ?? '',
 
       distance: null,
       rating: '0.0',
 
       reviewsCount: 0,
 
-      features: [],
-      picture: [],
+      features:
+          (data['amenities'] as List?)
+              ?.map(
+                (item) => FeaturesModel(name: item, icon: getAmenityIcon(item)),
+              )
+              .toList() ??
+          [],
+      picture:
+          (data['businessImages'] as List?)
+              ?.map((url) => PicturesModel(image: url))
+              .toList() ??
+          [],
     );
   }
 }

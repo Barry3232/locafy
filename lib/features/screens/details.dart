@@ -8,8 +8,13 @@ import 'package:locafy/widgets/details_section/review_card.dart';
 
 class DetailsScreen extends StatefulWidget {
   final BusinessModel business;
+  final String? distanceText;
 
-  const DetailsScreen({super.key, required this.business});
+  const DetailsScreen({
+    super.key,
+    required this.business,
+    required this.distanceText,
+  });
 
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
@@ -60,7 +65,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(widget.business.image),
+                image: widget.business.image.startsWith('http')
+                    ? NetworkImage(widget.business.image)
+                    : AssetImage(widget.business.image) as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),
@@ -96,7 +103,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
           DraggableScrollableSheet(
             initialChildSize: 0.57,
             minChildSize: 0.57,
-            maxChildSize: 0.95,
+            maxChildSize: 0.88,
             builder: (context, scrollController) {
               return Container(
                 padding: const EdgeInsets.all(20),
@@ -143,7 +150,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           CircleAvatar(radius: 3),
                           SizedBox(width: 5),
                           Text(
-                            widget.business.distanc!,
+                            widget.business.distanc ??
+                                widget.distanceText ??
+                                '',
                             style: TextStyle(color: Colors.grey),
                           ),
                         ],
@@ -156,7 +165,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           Icon(Icons.star, size: 16, color: Colors.orange),
                           SizedBox(width: 4),
                           Text(
-                            "${widget.business.rating} (${widget.business.reviewsCount} reviews)",
+                            "${widget.business.rating ?? ''} (${widget.business.reviewsCount ?? ''} reviews)",
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.black,
@@ -173,7 +182,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ),
                           SizedBox(width: 10),
                           Text(
-                            "Open Now",
+                            'Open Now',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.green,
@@ -236,14 +245,19 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.business.location,
+                                  widget.business.address ?? '',
                                   style: TextStyle(fontSize: 13),
                                 ),
                                 SizedBox(height: 5),
 
                                 Text(
-                                  widget.business.distanc!,
-                                  style: TextStyle(color: Colors.grey),
+                                  widget.business.distanc ??
+                                      widget.distanceText ??
+                                      '${widget.business.distance}',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ],
                             ),
@@ -271,8 +285,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             SizedBox(width: 8),
 
                             Text(
-                              widget.business.location,
-                              style: TextStyle(fontSize: 13),
+                              widget.business.openingHours ??
+                                  widget.business.distanc ??
+                                  '',
+                              style: TextStyle(fontSize: 16),
                             ),
 
                             Spacer(),
@@ -356,6 +372,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: widget.business.picture.map((pictures) {
+                            print(pictures.image);
+
                             return Padding(
                               padding: const EdgeInsets.only(right: 10.0),
                               child: PictureItems(
@@ -446,7 +464,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               SizedBox(height: 6),
 
                               Text(
-                                '(${widget.business.reviewsCount} Rewies)',
+                                '(${widget.business.reviewsCount ?? ''} Reviews)',
                                 style: TextStyle(color: Colors.grey),
                               ),
                             ],
@@ -457,40 +475,40 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               children: [
                                 ratingRow(
                                   star: 5,
-                                  value: widget.business.fiveStar!,
-                                  total: widget.business.reviewsCount!,
+                                  value: widget.business.fiveStar ?? 0,
+                                  total: widget.business.reviewsCount ?? 0,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 4,
-                                  value: widget.business.fourStar!,
-                                  total: widget.business.reviewsCount!,
+                                  value: widget.business.fourStar ?? 0,
+                                  total: widget.business.reviewsCount ?? 0,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 3,
-                                  value: widget.business.threeStar!,
-                                  total: widget.business.reviewsCount!,
+                                  value: widget.business.threeStar ?? 0,
+                                  total: widget.business.reviewsCount ?? 0,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 2,
-                                  value: widget.business.twoStar!,
-                                  total: widget.business.reviewsCount!,
+                                  value: widget.business.twoStar ?? 0,
+                                  total: widget.business.reviewsCount ?? 0,
                                 ),
 
                                 const SizedBox(height: 8),
 
                                 ratingRow(
                                   star: 1,
-                                  value: widget.business.oneStar!,
-                                  total: widget.business.reviewsCount!,
+                                  value: widget.business.oneStar ?? 0,
+                                  total: widget.business.reviewsCount ?? 0,
                                 ),
                               ],
                             ),

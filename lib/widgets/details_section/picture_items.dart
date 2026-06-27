@@ -15,7 +15,9 @@ class PictureItems extends StatelessWidget {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
-          child: Image.asset(image, fit: BoxFit.cover),
+          child: image.startsWith('http')
+              ? Image.network(image, fit: BoxFit.cover)
+              : Image.asset(image, fit: BoxFit.cover),
         ),
       ),
     );

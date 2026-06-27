@@ -87,18 +87,6 @@ class _PublishScreenState extends State<PublishScreen> {
     return data['secure_url'];
   }
 
-  // Future<String> uploadCoverPhoto(String businessId, File imageFile) async {
-  //   final ref = FirebaseStorage.instance
-  //       .ref()
-  //       .child('businesses')}
-  //       .child(businessId)
-  //       .child('cover.jpg');
-
-  //   await ref.putFile(imageFile);
-
-  //   return await ref.getDownloadURL();
-  // }
-
   Future<List<String>> uploadBusinessImages() async {
     List<String> urls = [];
 
@@ -112,30 +100,6 @@ class _PublishScreenState extends State<PublishScreen> {
 
     return urls;
   }
-
-  // Future<List<String>> uploadBusinessImages(String businessId) async {
-  //   List<String> imageUrls = [];
-
-  //   for (int i = 0; i < selectedImages.length; i++) {
-  //     final image = selectedImages[i];
-
-  //     if (image == null) continue;
-
-  //     final ref = FirebaseStorage.instance
-  //         .ref()
-  //         .child('businesses')
-  //         .child(businessId)
-  //         .child('image_$i.jpg');
-
-  //     await ref.putFile(image);
-
-  //     final url = await ref.getDownloadURL();
-
-  //     imageUrls.add(url);
-  //   }
-
-  //   return imageUrls;
-  // }
 
   List<String> selectedAmenities = [];
 
