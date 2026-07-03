@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/nav_bar.dart';
+import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/widgets/publish_section/add_picture.dart';
 import 'package:locafy/widgets/publish_section/features_amenities.dart';
 import 'dart:io';
@@ -35,34 +36,22 @@ class _PublishScreenState extends State<PublishScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   final FocusNode locationFocusNode = FocusNode();
+  final service = ImagePickerService();
+  // List<File?> selectedImage = List.filled(5, null);
 
   Future<void> imagePicker(int index) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-      final image = ImagePicker();
-      final picked = await image.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
-
+      final picked = await service.pickImage();
       if (picked == null) {
-        setState(() {
-          _isLoading = false;
-        });
         return;
       }
-
       setState(() {
-        selectedImages[index] = File(picked.path);
-        _isLoading = false;
+        selectedImages[index] = picked;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-
       print("Error picking image: $e");
     }
   }

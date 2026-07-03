@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/full_image.dart';
+import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
 import 'package:locafy/widgets/details_section/picture_items.dart';
 import 'package:locafy/widgets/details_section/review_card.dart';
+import 'dart:io';
+import 'package:locafy/widgets/details_section/review_section.dart';
 
 class DetailsScreen extends StatefulWidget {
   final BusinessModel business;
   final String? distanceText;
-
   const DetailsScreen({
     super.key,
     required this.business,
     required this.distanceText,
   });
-
   @override
   State<DetailsScreen> createState() => _DetailsScreenState();
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
+  int selectedRating = 0;
+  List<File?> selectedImages = List.filled(3, null);
+  final reviewController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+
   Widget ratingRow({
     required int star,
     required int value,
@@ -29,11 +35,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return Row(
       children: [
         Text('$star'),
-
         const SizedBox(width: 4),
-
         const Icon(Icons.star, size: 14, color: Colors.orange),
-
         const SizedBox(width: 8),
 
         Expanded(
@@ -45,15 +48,35 @@ class _DetailsScreenState extends State<DetailsScreen> {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-
         const SizedBox(width: 8),
-
         Text(value.toString()),
       ],
     );
   }
 
   bool showAllReviews = false;
+  bool _isTapped = false;
+  final pickImages = ImagePickerService();
+
+  Future<void> pickImage(int index) async {
+    final picked = await pickImages.pickImage();
+    if (picked == null) return;
+    setState(() {
+      selectedImages[index] = picked;
+    });
+  }
+
+  void removePicked(int index) {
+    setState(() {
+      selectedImages[index] = null;
+    });
+  }
+
+  void changeRating(int index) {
+    setState(() {
+      selectedRating = index + 1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -516,7 +539,70 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         ],
                       ),
 
+                      SizedBox(height: 10),
+
+                      _isTapped
+                          ? ReviewSection(
+                              formKey: formKey,
+                              controller: reviewController,
+                              onPickImage: pickImage,
+                              onRemoveImage: removePicked,
+                              selectedRating: selectedRating,
+                              onRatingChanged: (rating) {
+                                setState(() {
+                                  selectedRating = rating;
+                                });
+                              },
+                              selectedImages: selectedImages,
+                            )
+                          : SizedBox(),
                       SizedBox(height: 20),
+
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isTapped = !_isTapped;
+                          });
+                        },
+                        child: Container(
+                          height: 50,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: _isTapped
+                                ? Color(0xFF0A4FD6)
+                                : Colors.grey.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.edit_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 10),
+                              _isTapped
+                                  ? Text(
+                                      'Submit Submitted',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Write a Review',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                      ),
 
                       showAllReviews
                           ? reviewCard(
