@@ -1,13 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/features/services/image_picker.dart';
+import 'package:locafy/helper/app_snackbar.dart';
 import 'package:locafy/models/business_model.dart';
+import 'package:locafy/widgets/details_section/comment_section.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
 import 'package:locafy/widgets/details_section/picture_items.dart';
 import 'package:locafy/widgets/details_section/review_card.dart';
 import 'dart:io';
 import 'package:locafy/widgets/details_section/review_section.dart';
+import 'package:locafy/features/services/cloudinary_sevice.dart';
 
 class DetailsScreen extends StatefulWidget {
   final BusinessModel business;
@@ -54,9 +59,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
     );
   }
 
-  bool showAllReviews = false;
-  bool _isTapped = false;
+  bool showAllComment = false;
+  bool showReview = false;
+  bool isSubmitting = false;
   final pickImages = ImagePickerService();
+  final cloudinaryService = CloudinarySevice();
 
   Future<void> pickImage(int index) async {
     final picked = await pickImages.pickImage();
@@ -76,6 +83,64 @@ class _DetailsScreenState extends State<DetailsScreen> {
     setState(() {
       selectedRating = index + 1;
     });
+  }
+
+  Future<bool> submitReview() async {
+    try {
+      if (selectedRating == 0) {
+        AppSnackBar.error(context, 'Please select a rating.');
+        return false;
+      }
+      final comment = reviewController.text.trim();
+      final imageUrls = <String>[];
+
+      if (comment.isEmpty) {
+        AppSnackBar.error(context, 'Please Leave  comment.');
+        return false;
+      }
+      for (final image in selectedImages) {
+        if (image != null) {
+          final url = await cloudinaryService.uploadToCloudinary(image);
+
+          imageUrls.add(url);
+        }
+      }
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+      final username = userDoc["username"];
+      // final userPhoto = userDoc["profileImage"];
+
+      await FirebaseFirestore.instance
+          .collection("businesses")
+          .doc(widget.business.id)
+          .collection("reviews")
+          .add({
+            "userId": uid,
+            "userName": username,
+            // "userPhoto": userPhoto,
+            "comment": comment,
+            "rating": selectedRating,
+            "images": imageUrls,
+            "likes": 0,
+            "dislikes": 0,
+            "createdAt": FieldValue.serverTimestamp(),
+          });
+      if (!mounted) return false;
+      setState(() {
+        reviewController.clear();
+        selectedRating = 0;
+        selectedImages = List.filled(3, null);
+        showReview = false;
+        isSubmitting = false;
+      });
+      return true;
+    } catch (e) {
+      AppSnackBar.error(context, 'Failed to submit review. \n$e');
+    }
+    return false;
   }
 
   @override
@@ -438,10 +503,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             ),
                             onPressed: () {
                               setState(() {
-                                showAllReviews = !showAllReviews;
+                                showAllComment = !showAllComment;
                               });
                             },
-                            child: showAllReviews
+                            child: showAllComment
                                 ? Text(
                                     'See Less',
                                     style: TextStyle(
@@ -541,7 +606,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                       SizedBox(height: 10),
 
-                      _isTapped
+                      showReview
                           ? ReviewSection(
                               formKey: formKey,
                               controller: reviewController,
@@ -559,59 +624,84 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       SizedBox(height: 20),
 
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          if (!showReview) {
+                            setState(() {
+                              showReview = true;
+                            });
+                            return;
+                          }
+                          if (isSubmitting) {
+                            return;
+                          }
+
                           setState(() {
-                            _isTapped = !_isTapped;
+                            isSubmitting = true;
+                          });
+
+                          final success = await submitReview();
+                          if (!mounted) return;
+                          if (success) {
+                            AppSnackBar.success(
+                              context,
+                              "Review submitted successfully!",
+                            );
+                          }
+
+                          setState(() {
+                            isSubmitting = false;
                           });
                         },
                         child: Container(
                           height: 50,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: _isTapped
+                            color: showReview == true
                                 ? Color(0xFF0A4FD6)
                                 : Colors.grey.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.edit_outlined,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              SizedBox(width: 10),
-                              _isTapped
-                                  ? Text(
-                                      'Submit Submitted',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  : Text(
-                                      'Write a Review',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                          child: isSubmitting
+                              ? Center(
+                                  child: const SizedBox(
+                                    height: 25,
+                                    width: 25,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: Colors.white,
                                     ),
-                            ],
-                          ),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.edit_outlined,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      style: TextStyle(color: Colors.white),
+                                      showReview
+                                          ? "Submit Review"
+                                          : "Write a Review",
+                                    ),
+                                  ],
+                                ),
                         ),
                       ),
+                      SizedBox(height: 15),
 
-                      showAllReviews
-                          ? reviewCard(
-                              text:
-                                  'Great food, amazing emvironment and excellent customer service. Definitely coming back!',
-                            )
+                      showAllComment
+                          ? CommentSection()
+                          // reviewCard(
+                          //     text:
+                          //         'Great food, amazing emvironment and excellent customer service. Definitely coming back!',
+                          //   )
                           : SizedBox(),
 
-                      SizedBox(height: 10),
+                      SizedBox(height: 15),
 
                       InkWell(
                         onTap: () {},

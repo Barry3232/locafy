@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/nav_bar.dart';
+import 'package:locafy/features/services/cloudinary_sevice.dart';
 import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/widgets/publish_section/add_picture.dart';
 import 'package:locafy/widgets/publish_section/features_amenities.dart';
 import 'dart:io';
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:locafy/widgets/publish_section/map_section.dart';
 import 'package:locafy/widgets/publish_section/on_success.dart';
-import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PublishScreen extends StatefulWidget {
@@ -34,10 +33,8 @@ class _PublishScreenState extends State<PublishScreen> {
   final TextEditingController _businessNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-
   final FocusNode locationFocusNode = FocusNode();
   final service = ImagePickerService();
-  // List<File?> selectedImage = List.filled(5, null);
 
   Future<void> imagePicker(int index) async {
     try {
@@ -56,25 +53,7 @@ class _PublishScreenState extends State<PublishScreen> {
     }
   }
 
-  Future<String> uploadToCloudinary(File imageFile) async {
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('https://api.cloudinary.com/v1_1/ddd16s54h/image/upload'),
-    );
-
-    request.fields['upload_preset'] = 'locafy_business';
-
-    request.files.add(
-      await http.MultipartFile.fromPath('file', imageFile.path),
-    );
-
-    final response = await request.send();
-    final responseData = await response.stream.bytesToString();
-
-    final data = jsonDecode(responseData);
-
-    return data['secure_url'];
-  }
+  final cloudinaryService = CloudinarySevice();
 
   Future<List<String>> uploadBusinessImages() async {
     List<String> urls = [];
@@ -82,7 +61,7 @@ class _PublishScreenState extends State<PublishScreen> {
     for (final image in selectedImages) {
       if (image == null) continue;
 
-      final url = await uploadToCloudinary(image);
+      final url = await cloudinaryService.uploadToCloudinary(image);
 
       urls.add(url);
     }
@@ -818,9 +797,8 @@ class _PublishScreenState extends State<PublishScreen> {
                               .doc();
 
                           final businessId = docRef.id;
-                          final coverPhotoUrl = await uploadToCloudinary(
-                            coverPhoto!,
-                          );
+                          final coverPhotoUrl = await cloudinaryService
+                              .uploadToCloudinary(coverPhoto!);
 
                           final galleryUrls = await uploadBusinessImages();
                           final currentUser = FirebaseAuth.instance.currentUser;

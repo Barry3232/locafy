@@ -4,6 +4,7 @@ import 'package:locafy/models/pictures_modle.dart';
 import 'package:locafy/widgets/details_section/amenities_icon.dart';
 
 class BusinessModel {
+  final String? id;
   final String name;
   final String image;
   final String category;
@@ -27,6 +28,7 @@ class BusinessModel {
   final int? oneStar;
 
   BusinessModel({
+    this.id,
     this.openingHours,
     required this.name,
     required this.image,
@@ -49,8 +51,9 @@ class BusinessModel {
     this.oneStar,
   });
 
-  factory BusinessModel.fromFirestore(Map<String, dynamic> data) {
+  factory BusinessModel.fromFirestore(String id, Map<String, dynamic> data) {
     return BusinessModel(
+      id: id,
       name: data['businessName'] ?? '',
       image: data['coverPhotoUrl'] ?? '',
       category: data['category'] ?? '',
@@ -60,12 +63,9 @@ class BusinessModel {
       latitude: data['latitude'],
       longitude: data['longitude'],
       openingHours: data['openingHours'] ?? '',
-
       distance: null,
       rating: '0.0',
-
       reviewsCount: 0,
-
       features:
           (data['amenities'] as List?)
               ?.map(

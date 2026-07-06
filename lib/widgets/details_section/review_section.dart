@@ -87,9 +87,8 @@ class ReviewSection extends StatelessWidget {
               },
               decoration: InputDecoration(
                 counterText: '',
-
                 hintText: 'Share your experience with others...',
-                hintStyle: TextStyle(color: Colors.grey.withOpacity(0.1)),
+                hintStyle: TextStyle(color: Colors.grey),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(
@@ -97,7 +96,6 @@ class ReviewSection extends StatelessWidget {
                     width: 2,
                   ),
                 ),
-
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(color: Colors.blue, width: 2),
