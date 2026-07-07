@@ -9,7 +9,6 @@ import 'package:locafy/widgets/details_section/comment_section.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
 import 'package:locafy/widgets/details_section/picture_items.dart';
-import 'package:locafy/widgets/details_section/review_card.dart';
 import 'dart:io';
 import 'package:locafy/widgets/details_section/review_section.dart';
 import 'package:locafy/features/services/cloudinary_sevice.dart';
@@ -694,7 +693,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       SizedBox(height: 15),
 
                       showAllComment
-                          ? CommentSection()
+                          ? CommentSection(business: widget.business)
                           // reviewCard(
                           //     text:
                           //         'Great food, amazing emvironment and excellent customer service. Definitely coming back!',
