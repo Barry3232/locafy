@@ -5,6 +5,7 @@ import 'package:locafy/models/pictures_modle.dart';
 
 List<BusinessModel> businesses = [
   BusinessModel(
+    id: 'Business_1',
     name: 'Shoprite',
     image: 'assets/images/grocery.jpg',
     category: 'Shop',
@@ -36,6 +37,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_2',
     name: 'Genesis Cafe',
     image: 'assets/images/Genesis.jpg',
     category: 'Restaurant',
@@ -69,6 +71,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_3',
     name: 'Kilimanjaro Cafe',
     image: 'assets/images/kilimanjaro.jpg',
     category: 'Restaurant',
@@ -102,6 +105,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_4',
     name: 'The Boss Store',
     image: 'assets/images/The Boss store.jpg',
     category: 'Shop',
@@ -130,6 +134,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_5',
     name: 'PMP Resort',
     image: 'assets/images/resort.jpg',
     category: 'Resort',
@@ -166,6 +171,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_6',
     name: "Milo's Resort",
     image: 'assets/images/resort1.jpg',
     category: 'Resort',
@@ -196,6 +202,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_7',
     name: "Milo's Barber Shop",
     image: 'assets/images/Barbershop.jpg',
     category: 'Shop',
@@ -220,6 +227,7 @@ List<BusinessModel> businesses = [
   ),
 
   BusinessModel(
+    id: 'Business_8',
     name: "Milo's Cloth Shop",
     image: 'assets/images/cloths.jpg',
     category: 'Shop',

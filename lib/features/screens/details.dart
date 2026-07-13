@@ -123,8 +123,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
             "comment": comment,
             "rating": selectedRating,
             "images": imageUrls,
-            "likes": 0,
-            "dislikes": 0,
+            "helpfulCount": 0,
+            "helpfulBy": [],
             "createdAt": FieldValue.serverTimestamp(),
           });
       if (!mounted) return false;
@@ -656,7 +656,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: showReview == true
-                                ? Color(0xFF0A4FD6)
+                                ? isSubmitting
+                                      ? Colors.grey.withValues(alpha: 0.3)
+                                      : Color(0xFF0A4FD6)
                                 : Colors.grey.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -694,10 +696,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                       showAllComment
                           ? CommentSection(business: widget.business)
-                          // reviewCard(
-                          //     text:
-                          //         'Great food, amazing emvironment and excellent customer service. Definitely coming back!',
-                          //   )
                           : SizedBox(),
 
                       SizedBox(height: 15),

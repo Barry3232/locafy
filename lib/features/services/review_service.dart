@@ -17,4 +17,33 @@ class ReviewService {
               .toList();
         });
   }
+
+  Future<void> toggleHelpful({
+    required String businessId,
+    required String reviewId,
+    required String userId,
+  }) async {
+    final reviewRef = FirebaseFirestore.instance
+        .collection('businesses')
+        .doc(businessId)
+        .collection("reviews")
+        .doc(reviewId);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(reviewRef);
+      final data = snapshot.data()!;
+      List helpfulBy = List.from(data["helpfulBy"] ?? []);
+
+      if (helpfulBy.contains(userId)) {
+        helpfulBy.remove(userId);
+      } else {
+        helpfulBy.add(userId);
+      }
+
+      transaction.update(reviewRef, {
+        "helpfulBy": helpfulBy,
+        "helpfulCount": helpfulBy.length,
+      });
+    });
+  }
 }

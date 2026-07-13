@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
             print('Latitude: ${data['latitude']}');
             print('Longitude: ${data['longitude']}');
             print(data['coverPhotoUrl']);
-            return BusinessModel.fromFirestore(doc.id, data);
+            return BusinessModel.fromFirestore(doc);
           }).toList();
 
           final allBusinesses = [...firestoreBusinesses, ...businesses];

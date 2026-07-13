@@ -141,20 +141,3 @@ class ReviewSection extends StatelessWidget {
     );
   }
 }
-
-
-// class _ReviewSectionState extends State<ReviewSection> {
-//   int selectedRating = 0;
-//   List<File?> selectedImages = List.filled(3, null);
-//   final TextEditingController _descriptionController = TextEditingController();
-//   final _formKey = GlobalKey<FormState>();
-//   final image = ImagePickerService();
-//   Future<void> pickImage(int index) async {
-//     final picked = await image.pickImage();
-//     if (picked == null) return;
-//     setState(() {
-//       selectedImages[index] = picked;
-//     });
-//   }
-
-

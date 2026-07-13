@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/features/screens/reviews.dart';
 import 'package:locafy/features/services/review_service.dart';
 import 'package:locafy/models/review_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -13,16 +15,14 @@ class CommentSection extends StatefulWidget {
 }
 
 class _CommentSectionState extends State<CommentSection> {
-  Widget starButton(int index) {
-    return IconButton(
-      onPressed: () {
-        // setState(() {
-        //   _isSelected = !_isSelected;
-        // });
-      },
-      icon: Icon(Icons.star, color: Colors.amber),
-    );
-  }
+  // Widget starButton(int index) {
+  //   return IconButton(
+  //     onPressed: () {
+
+  //     },
+  //     icon: Icon(Icons.star, color: Colors.amber),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,13 @@ class _CommentSectionState extends State<CommentSection> {
       stream: ReviewService().getReviews('${widget.business.id}'),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return CircularProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(color: Color(0xFF0A4FD6)),
+          );
         }
 
         final reviews = snapshot.data!;
+        final previewReviews = reviews.take(3).toList();
         return Padding(
           padding: const EdgeInsets.only(left: 5.0, right: 5.0),
           child: Container(
@@ -59,7 +62,7 @@ class _CommentSectionState extends State<CommentSection> {
                         "2.5",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(width: 15),
+                      SizedBox(width: 13),
                       Text("(${reviews.length} review)"),
                     ],
                   ),
@@ -67,9 +70,11 @@ class _CommentSectionState extends State<CommentSection> {
                   ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: reviews.length,
+                    itemCount: previewReviews.length,
                     itemBuilder: (context, index) {
-                      final review = reviews[index];
+                      final review = previewReviews[index];
+                      final uid = FirebaseAuth.instance.currentUser!.uid;
+                      final isHelpful = review.helpfulBy.contains(uid);
                       return Card(
                         elevation: 1,
                         shadowColor: Colors.grey,
@@ -107,46 +112,52 @@ class _CommentSectionState extends State<CommentSection> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(review.userName),
+                                      Row(
+                                        children: [
+                                          Text(review.userName),
+                                          SizedBox(width: 5),
+                                          Container(
+                                            height: 20,
+                                            width: 65,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                255,
+                                                176,
+                                                185,
+                                                241,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.verified,
+                                                  size: 11,
+                                                  color: Colors.indigo,
+                                                ),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'Verified',
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                       Text(timeago.format(review.createdAt)),
                                     ],
                                   ),
                                   SizedBox(width: 5),
-                                  Container(
-                                    height: 20,
-                                    width: 65,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        176,
-                                        185,
-                                        241,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.verified,
-                                          size: 11,
-                                          color: Colors.indigo,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Verified',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                                   Spacer(),
                                   ...List.generate(
                                     5,
@@ -174,27 +185,143 @@ class _CommentSectionState extends State<CommentSection> {
                                     separatorBuilder: (_, __) =>
                                         SizedBox(width: 8),
                                     itemBuilder: (context, imageIndex) {
-                                      return ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Image.network(
-                                          review.images[imageIndex],
-                                          width: 70,
-                                          fit: BoxFit.cover,
+                                      return GestureDetector(
+                                        onTap: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) {
+                                              return Dialog(
+                                                backgroundColor: Colors.black,
+                                                insetPadding:
+                                                    const EdgeInsets.all(10),
+                                                child: InteractiveViewer(
+                                                  minScale: 1,
+                                                  maxScale: 5,
+                                                  child: Image.network(
+                                                    review.images[imageIndex],
+                                                    fit: BoxFit.contain,
+                                                    loadingBuilder:
+                                                        (
+                                                          context,
+                                                          child,
+                                                          loadingProgress,
+                                                        ) {
+                                                          if (loadingProgress ==
+                                                              null)
+                                                            return child;
+
+                                                          return Container(
+                                                            width: 70,
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            child: const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                    strokeWidth:
+                                                                        2,
+                                                                  ),
+                                                            ),
+                                                          );
+                                                        },
+                                                    errorBuilder:
+                                                        (
+                                                          context,
+                                                          error,
+                                                          stackTrace,
+                                                        ) {
+                                                          return Container(
+                                                            width: 70,
+                                                            color: Colors
+                                                                .grey
+                                                                .shade200,
+                                                            child: const Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .image_not_supported_outlined,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 4,
+                                                                ),
+                                                                Text(
+                                                                  "No Image",
+                                                                  style: TextStyle(
+                                                                    fontSize:
+                                                                        10,
+                                                                    color: Colors
+                                                                        .grey,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.network(
+                                            review.images[imageIndex],
+                                            width: 70,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                                  return Container(
+                                                    width: 70,
+                                                    color: Colors.grey.shade200,
+                                                    child: const Center(
+                                                      child: Icon(
+                                                        Icons
+                                                            .image_not_supported_outlined,
+                                                        size: 35,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                          ),
                                         ),
                                       );
                                     },
                                   ),
                                 ),
                               SizedBox(height: 8),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                style: IconButton.styleFrom(
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.only(left: 4),
+                                  minimumSize: Size(0, 0),
                                   tapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                onPressed: () {},
-                                icon: Icon(Icons.thumb_up_off_alt_rounded),
+                                onPressed: () {
+                                  ReviewService().toggleHelpful(
+                                    businessId: '${widget.business.id}',
+                                    reviewId: review.id,
+                                    userId: uid,
+                                  );
+                                },
+                                icon: Icon(
+                                  isHelpful
+                                      ? Icons.thumb_up
+                                      : Icons.thumb_up_outlined,
+                                  color: isHelpful
+                                      ? Color(0xFF0A4FD6)
+                                      : Colors.grey,
+                                ),
+
+                                label: Text("${review.helpfulCount}"),
                               ),
                             ],
                           ),
@@ -209,7 +336,14 @@ class _CommentSectionState extends State<CommentSection> {
                       minimumSize: Size(0, 0),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AllReviews(business: widget.business),
+                        ),
+                      );
+                    },
                     child: Text(
                       'See all Reviews',
                       style: TextStyle(color: Color(0xFF0A4FD6)),

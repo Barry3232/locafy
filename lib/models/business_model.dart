@@ -1,10 +1,10 @@
 import 'package:locafy/models/features_model.dart';
 import 'package:locafy/models/pictures_modle.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locafy/widgets/details_section/amenities_icon.dart';
 
 class BusinessModel {
-  final String? id;
+  final String id;
   final String name;
   final String image;
   final String category;
@@ -28,7 +28,7 @@ class BusinessModel {
   final int? oneStar;
 
   BusinessModel({
-    this.id,
+    required this.id,
     this.openingHours,
     required this.name,
     required this.image,
@@ -51,9 +51,10 @@ class BusinessModel {
     this.oneStar,
   });
 
-  factory BusinessModel.fromFirestore(String id, Map<String, dynamic> data) {
+  factory BusinessModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
     return BusinessModel(
-      id: id,
+      id: doc.id,
       name: data['businessName'] ?? '',
       image: data['coverPhotoUrl'] ?? '',
       category: data['category'] ?? '',

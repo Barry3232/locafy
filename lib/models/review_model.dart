@@ -10,6 +10,7 @@ class ReviewModel {
   final List<String> images;
   final DateTime createdAt;
   final int helpfulCount;
+  final List<String> helpfulBy;
 
   ReviewModel({
     required this.images,
@@ -21,6 +22,7 @@ class ReviewModel {
     required this.rating,
     required this.createdAt,
     required this.helpfulCount,
+    required this.helpfulBy,
   });
 
   factory ReviewModel.fromFirestore(DocumentSnapshot doc) {
@@ -35,6 +37,7 @@ class ReviewModel {
       rating: (data['rating'] ?? 0).toDouble(),
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       helpfulCount: data['helpfulCount'] ?? 0,
+      helpfulBy: List<String>.from(data["helpfulBy"] ?? []),
     );
   }
 }
