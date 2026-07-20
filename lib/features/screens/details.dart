@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/features/screens/detail_map.dart';
 import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/features/services/image_picker.dart';
+import 'package:locafy/features/services/review_service.dart';
 import 'package:locafy/helper/app_snackbar.dart';
 import 'package:locafy/models/business_model.dart';
+import 'package:locafy/models/review_model.dart';
 import 'package:locafy/widgets/details_section/comment_section.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
@@ -45,7 +48,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
         Expanded(
           child: LinearProgressIndicator(
-            value: value / total,
+            value: total == 0 ? 0 : value / total,
             backgroundColor: Colors.grey.shade300,
             color: Colors.orange,
             minHeight: 6,
@@ -292,7 +295,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             ),
                             Spacer(),
                             EnquiryItems(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => DirectionScreen(),
+                                  ),
+                                );
+                              },
                               icon: Icons.near_me_outlined,
                               text: 'Directions',
                             ),
@@ -525,84 +534,137 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ),
                         ],
                       ),
+                      StreamBuilder<List<ReviewModel>>(
+                        stream: ReviewService().getReviews(widget.business.id),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
 
-                      Row(
-                        children: [
-                          Column(
+                          final reviews = snapshot.data!;
+                          final totalReviews = reviews.length;
+
+                          final fiveStar = reviews
+                              .where((r) => r.rating.round() == 5)
+                              .length;
+
+                          final fourStar = reviews
+                              .where((r) => r.rating.round() == 4)
+                              .length;
+
+                          final threeStar = reviews
+                              .where((r) => r.rating.round() == 3)
+                              .length;
+
+                          final twoStar = reviews
+                              .where((r) => r.rating.round() == 2)
+                              .length;
+
+                          final oneStar = reviews
+                              .where((r) => r.rating.round() == 1)
+                              .length;
+
+                          final averageRating = totalReviews == 0
+                              ? 0.0
+                              : reviews
+                                        .map((e) => e.rating)
+                                        .reduce((a, b) => a + b) /
+                                    totalReviews;
+
+                          return Row(
                             children: [
-                              Text(
-                                widget.business.rating!,
-                                style: TextStyle(fontSize: 28),
-                              ),
-
-                              SizedBox(height: 6),
-
-                              Row(
-                                children: List.generate(
-                                  5,
-                                  (index) => Icon(
-                                    Icons.star,
-                                    size: 16,
-                                    color: Colors.orange,
+                              Column(
+                                children: [
+                                  Text(
+                                    averageRating.toStringAsFixed(1),
+                                    style: const TextStyle(fontSize: 28),
                                   ),
-                                ),
+
+                                  const SizedBox(height: 6),
+
+                                  Row(
+                                    children: List.generate(
+                                      5,
+                                      (index) => Icon(
+                                        index < averageRating.round()
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        size: 16,
+                                        color: Colors.orange,
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 6),
+
+                                  Text(
+                                    '($totalReviews Reviews)',
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                ],
                               ),
 
-                              SizedBox(height: 6),
+                              const SizedBox(width: 40),
 
-                              Text(
-                                '(${widget.business.reviewsCount ?? ''} Reviews)',
-                                style: TextStyle(color: Colors.grey),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    ratingRow(
+                                      star: 5,
+                                      value: totalReviews > 0
+                                          ? fiveStar
+                                          : widget.business.fiveStar ?? 0,
+                                      total: totalReviews,
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    ratingRow(
+                                      star: 4,
+                                      value: totalReviews > 0
+                                          ? fourStar
+                                          : widget.business.fourStar ?? 0,
+                                      total: totalReviews,
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    ratingRow(
+                                      star: 3,
+                                      value: totalReviews > 0
+                                          ? threeStar
+                                          : widget.business.threeStar ?? 0,
+                                      total: totalReviews,
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    ratingRow(
+                                      star: 2,
+                                      value: totalReviews > 0
+                                          ? twoStar
+                                          : widget.business.twoStar ?? 0,
+                                      total: totalReviews,
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    ratingRow(
+                                      star: 1,
+                                      value: totalReviews > 0
+                                          ? oneStar
+                                          : widget.business.oneStar ?? 0,
+                                      total: totalReviews,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
-                          ),
-                          SizedBox(width: 40),
-                          Expanded(
-                            child: Column(
-                              children: [
-                                ratingRow(
-                                  star: 5,
-                                  value: widget.business.fiveStar ?? 0,
-                                  total: widget.business.reviewsCount ?? 0,
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                ratingRow(
-                                  star: 4,
-                                  value: widget.business.fourStar ?? 0,
-                                  total: widget.business.reviewsCount ?? 0,
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                ratingRow(
-                                  star: 3,
-                                  value: widget.business.threeStar ?? 0,
-                                  total: widget.business.reviewsCount ?? 0,
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                ratingRow(
-                                  star: 2,
-                                  value: widget.business.twoStar ?? 0,
-                                  total: widget.business.reviewsCount ?? 0,
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                ratingRow(
-                                  star: 1,
-                                  value: widget.business.oneStar ?? 0,
-                                  total: widget.business.reviewsCount ?? 0,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-
                       SizedBox(height: 10),
 
                       showReview

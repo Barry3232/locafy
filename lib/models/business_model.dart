@@ -9,12 +9,13 @@ class BusinessModel {
   final String image;
   final String category;
   final String? distanc;
-  double? distance;
+  final double? distance;
   final String? rating;
   final String? address;
   final double? latitude;
   final double? longitude;
   final int? reviewsCount;
+  final double? averageRating;
   final String description;
   final String location;
   final String? openingHours;
@@ -35,6 +36,7 @@ class BusinessModel {
     required this.category,
     this.distanc,
     this.distance,
+    this.averageRating,
     this.rating,
     required this.location,
     this.address,
