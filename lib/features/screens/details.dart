@@ -298,7 +298,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (_) => DirectionScreen(),
+                                    builder: (_) => DirectionScreen(
+                                      business: widget.business,
+                                      distanceText: widget.distanceText,
+                                    ),
                                   ),
                                 );
                               },

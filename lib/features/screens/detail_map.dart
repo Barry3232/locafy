@@ -1,21 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:locafy/models/business_model.dart';
+import 'package:locafy/features/services/route_service.dart';
 
-class DirectionScreen extends StatelessWidget {
-  const DirectionScreen({super.key});
+class DirectionScreen extends StatefulWidget {
+  final BusinessModel business;
+  final String? distanceText;
+  const DirectionScreen({
+    super.key,
+    required this.business,
+    required this.distanceText,
+  });
+
+  @override
+  State<DirectionScreen> createState() => _DirectionScreenState();
+}
+
+class _DirectionScreenState extends State<DirectionScreen> {
+  final MapController mapController = MapController();
+  LatLng? currentLocation;
+  List<LatLng> routePoints = [];
+  double? routeDistance;
+  double? routeDuration;
+  bool loadingRoute = false;
+
+  Future<void> getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    if (!mounted) return;
+    setState(() {
+      currentLocation = LatLng(position.latitude, position.longitude);
+    });
+
+    final bounds = LatLngBounds.fromPoints([
+      currentLocation!,
+      LatLng(widget.business.latitude!, widget.business.longitude!),
+    ]);
+
+    mapController.fitCamera(
+      CameraFit.bounds(bounds: bounds, padding: const EdgeInsets.all(80)),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('no');
+    print(widget.business.latitude);
+    print(widget.business.longitude);
     return Scaffold(
       body: Stack(
         children: [
           /// MAP PLACEHOLDER
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.grey.shade300,
-            child: const Center(
-              child: Icon(Icons.map, size: 100, color: Colors.white),
+          FlutterMap(
+            mapController: mapController,
+            options: MapOptions(
+              initialCenter:
+                  currentLocation ??
+                  LatLng(widget.business.latitude!, widget.business.longitude!),
+              initialZoom: 16,
             ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.locafy',
+              ),
+
+              // navigation route polyline
+              if (routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: routePoints,
+                      strokeWidth: 6,
+                      color: const Color(0xFF0A4FD6),
+                    ),
+                  ],
+                ),
+              MarkerLayer(
+                markers: [
+                  /// USER LOCATION
+                  if (currentLocation != null)
+                    Marker(
+                      point: currentLocation!,
+                      width: 50,
+                      height: 50,
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Colors.blue,
+                        size: 35,
+                      ),
+                    ),
+
+                  /// BUSINESS LOCATION
+                  Marker(
+                    point: LatLng(
+                      widget.business.latitude!,
+                      widget.business.longitude!,
+                    ),
+                    width: 50,
+                    height: 50,
+                    child: const Icon(
+                      Icons.location_pin,
+                      color: Colors.red,
+                      size: 45,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
 
           /// BACK BUTTON
@@ -35,15 +144,17 @@ class DirectionScreen extends StatelessWidget {
 
           /// MY LOCATION BUTTON
           Positioned(
-            right: 16,
-            bottom: 220,
-            child: CircleAvatar(
-              radius: 25,
+            right: 15,
+            bottom: 270,
+            child: FloatingActionButton.small(
+              heroTag: "location",
               backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.my_location, color: Colors.blue),
-              ),
+              onPressed: () {
+                if (currentLocation != null) {
+                  mapController.move(currentLocation!, 16);
+                }
+              },
+              child: const Icon(Icons.my_location, color: Colors.blue),
             ),
           ),
 
@@ -51,7 +162,7 @@ class DirectionScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 210,
+              height: 240,
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -61,28 +172,47 @@ class DirectionScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Barry Restaurant",
+                  Text(
+                    widget.business.name,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                   ),
 
                   const SizedBox(height: 4),
 
-                  Text(
-                    "8 mins • 2.4 km",
-                    style: TextStyle(color: Colors.grey.shade600),
+                  Row(
+                    children: [
+                      Text(
+                        routeDuration == null
+                            ? "-- min"
+                            : "${(routeDuration! / 60).round()} min",
+                      ),
+                      SizedBox(width: 8),
+                      CircleAvatar(
+                        radius: 2,
+                        backgroundColor: Colors.grey.shade600,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        routeDistance == null
+                            ? widget.distanceText ?? "Distance unavailable"
+                            : "${(routeDistance! / 1000).toStringAsFixed(1)} km",
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    ],
                   ),
 
                   const Divider(height: 30),
 
-                  const Row(
+                  Row(
                     children: [
                       Icon(Icons.location_on, color: Colors.red),
 
                       SizedBox(width: 10),
 
                       Expanded(
-                        child: Text("8b Trans Woji Road, Port Harcourt"),
+                        child: Text(
+                          widget.business.address ?? "No address available",
+                        ),
                       ),
                     ],
                   ),
@@ -93,7 +223,24 @@ class DirectionScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        print('Start Navigation button pressed');
+                        if (currentLocation == null) return;
+
+                        final result = await RouteService().getRouteDetails(
+                          start: currentLocation!,
+                          end: LatLng(
+                            widget.business.latitude!,
+                            widget.business.longitude!,
+                          ),
+                        );
+
+                        setState(() {
+                          routePoints = result["points"];
+                          routeDistance = result["distance"];
+                          routeDuration = result["duration"];
+                        });
+                      },
 
                       icon: const Icon(Icons.navigation),
 

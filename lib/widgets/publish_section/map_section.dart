@@ -52,7 +52,7 @@ class _MapSectionState extends State<MapSection> {
     selectedLocation = LatLng(position.latitude, position.longitude);
 
     await getAddress(position.latitude, position.longitude);
-
+    if (!mounted) return;
     setState(() {});
   }
 
