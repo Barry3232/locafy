@@ -8,8 +8,8 @@ import 'package:locafy/widgets/publish_section/features_amenities.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:locafy/widgets/publish_section/map_section.dart';
-import 'package:locafy/widgets/publish_section/on_success.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:locafy/widgets/success_widget.dart';
 
 class PublishScreen extends StatefulWidget {
   const PublishScreen({super.key});
@@ -28,7 +28,6 @@ class _PublishScreenState extends State<PublishScreen> {
   double? selectedLongitude;
   bool isSelected = false;
   bool _isLoading = false;
-  bool _isSuccess = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _businessNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -812,7 +811,6 @@ class _PublishScreenState extends State<PublishScreen> {
                             setState(() {
                               _isLoading = false;
                             });
-
                             return;
                           }
 
@@ -824,32 +822,24 @@ class _PublishScreenState extends State<PublishScreen> {
                             'businessType': selectedBusinessType,
                             'description': _descriptionController.text.trim(),
                             'phoneNumber': _phoneNumberController.text.trim(),
-
                             'address': selectedAddress,
                             'latitude': selectedLatitude,
                             'longitude': selectedLongitude,
-
                             'openingHours': selectedTime,
-
                             'amenities': selectedAmenities,
-
                             'coverPhotoUrl': coverPhotoUrl,
-
                             'businessImages': galleryUrls,
-
                             'createdAt': FieldValue.serverTimestamp(),
                           });
 
-                          setState(() {
-                            _isSuccess = true;
-                          });
-
-                          await Future.delayed(const Duration(seconds: 3));
-
-                          setState(() {
-                            _isSuccess = false;
-                          });
-
+                          if (!mounted) return;
+                          await showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => const SuccessWidget(
+                              text: 'Published Successfully',
+                            ),
+                          );
                           if (!mounted) return;
 
                           Navigator.pushReplacement(
@@ -905,11 +895,6 @@ class _PublishScreenState extends State<PublishScreen> {
                     ),
                   ],
                 ),
-
-                if (_isSuccess == true)
-                  Positioned.fill(
-                    child: OnSuccess(name: 'Published Successfully'),
-                  ),
               ],
             ),
           ),

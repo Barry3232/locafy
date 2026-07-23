@@ -8,6 +8,7 @@ import 'package:locafy/features/services/review_service.dart';
 import 'package:locafy/helper/app_snackbar.dart';
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/models/review_model.dart';
+import 'package:locafy/widgets/details_section/call_dialog.dart';
 import 'package:locafy/widgets/details_section/comment_section.dart';
 import 'package:locafy/widgets/details_section/enquiry_items.dart';
 import 'package:locafy/widgets/details_section/features_items.dart';
@@ -15,6 +16,7 @@ import 'package:locafy/widgets/details_section/picture_items.dart';
 import 'dart:io';
 import 'package:locafy/widgets/details_section/review_section.dart';
 import 'package:locafy/features/services/cloudinary_sevice.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsScreen extends StatefulWidget {
   final BusinessModel business;
@@ -247,22 +249,46 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ),
                         ],
                       ),
-
                       SizedBox(height: 5),
 
                       Row(
                         children: [
                           Icon(Icons.star, size: 16, color: Colors.orange),
                           SizedBox(width: 4),
-                          Text(
-                            "${widget.business.rating ?? ''} (${widget.business.reviewsCount ?? ''} reviews)",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
 
+                          StreamBuilder<List<ReviewModel>>(
+                            stream: ReviewService().getReviews(
+                              widget.business.id,
+                            ),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return Text(
+                                  "${widget.business.rating ?? '0.0'} (${widget.business.reviewsCount ?? 0} reviews)",
+                                );
+                              }
+
+                              final reviews = snapshot.data!;
+                              final totalReviews = reviews.length;
+
+                              final averageRating = totalReviews == 0
+                                  ? (double.tryParse(
+                                          widget.business.rating ?? "0",
+                                        ) ??
+                                        0)
+                                  : reviews
+                                            .map((e) => e.rating)
+                                            .reduce((a, b) => a + b) /
+                                        totalReviews;
+
+                              return Text(
+                                "${averageRating.toStringAsFixed(1)} ($totalReviews reviews)",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
+                          ),
                           SizedBox(width: 10),
 
                           Container(
@@ -281,7 +307,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ),
                         ],
                       ),
-
                       SizedBox(height: 12),
 
                       Padding(
@@ -289,7 +314,28 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         child: Row(
                           children: [
                             EnquiryItems(
-                              onTap: () {},
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return CallDialog(
+                                      businessName: widget.business.name,
+                                      phoneNumber:
+                                          widget.business.phoneNumber ??
+                                          "Not Available",
+
+                                      onCall: () async {
+                                        final Uri phone = Uri(
+                                          scheme: 'tel',
+                                          path: widget.business.phoneNumber,
+                                        );
+
+                                        await launchUrl(phone);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
                               icon: Icons.phone,
                               text: 'Call',
                             ),
@@ -367,7 +413,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           ],
                         ),
                       ),
-
                       SizedBox(height: 5),
 
                       Container(

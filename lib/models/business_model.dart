@@ -17,11 +17,11 @@ class BusinessModel {
   final int? reviewsCount;
   final double? averageRating;
   final String description;
+  final String? phoneNumber;
   final String location;
   final String? openingHours;
   final List<FeaturesModel> features;
   final List<PicturesModel> picture;
-
   final int? fiveStar;
   final int? fourStar;
   final int? threeStar;
@@ -42,6 +42,7 @@ class BusinessModel {
     this.address,
     this.latitude,
     this.longitude,
+    this.phoneNumber,
     this.reviewsCount,
     required this.description,
     required this.features,
@@ -69,6 +70,7 @@ class BusinessModel {
       distance: null,
       rating: '0.0',
       reviewsCount: 0,
+      phoneNumber: data["phoneNumber"],
       features:
           (data['amenities'] as List?)
               ?.map(

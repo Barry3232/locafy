@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locafy/features/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:locafy/widgets/success_widget.dart';
 
 class VerifyNumber extends StatefulWidget {
   final String phoneNumber;
@@ -32,7 +33,6 @@ class _VerifyNumberState extends State<VerifyNumber> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
-  bool _isSuccess = false;
 
   final focusNode1 = FocusNode();
   final focusNode2 = FocusNode();
@@ -529,13 +529,15 @@ class _VerifyNumberState extends State<VerifyNumber> {
 
                                         if (!mounted) return;
 
-                                        setState(() {
-                                          _isSuccess = true;
-                                        });
-
-                                        await Future.delayed(
-                                          const Duration(seconds: 5),
+                                        await showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => const SuccessWidget(
+                                            text:
+                                                'Account Created Successfully',
+                                          ),
                                         );
+                                        if (!mounted) return;
 
                                         Navigator.pushReplacement(
                                           context,
@@ -610,45 +612,46 @@ class _VerifyNumberState extends State<VerifyNumber> {
                     ),
                   ),
                 ),
-                if (_isSuccess)
-                  Positioned.fill(
-                    child: Center(
-                      child: Container(
-                        color: Colors.black54,
-                        child: Center(
-                          child: Container(
-                            width: 260,
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: Colors.green,
-                                  size: 70,
-                                ),
+                // if (_isSuccess)
 
-                                SizedBox(height: 15),
+                // Positioned.fill(
+                //   child: Center(
+                //     child: Container(
+                //       color: Colors.black54,
+                //       child: Center(
+                //         child: Container(
+                //           width: 260,
+                //           padding: const EdgeInsets.all(20),
+                //           decoration: BoxDecoration(
+                //             color: Colors.white,
+                //             borderRadius: BorderRadius.circular(20),
+                //           ),
+                //           child: Column(
+                //             mainAxisSize: MainAxisSize.min,
+                //             children: const [
+                //               Icon(
+                //                 Icons.check_circle,
+                //                 color: Colors.green,
+                //                 size: 70,
+                //               ),
 
-                                Text(
-                                  'Account Created Successfully',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                //               SizedBox(height: 15),
+
+                //               Text(
+                //                 'Account Created Successfully',
+                //                 textAlign: TextAlign.center,
+                //                 style: TextStyle(
+                //                   fontSize: 18,
+                //                   fontWeight: FontWeight.bold,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ],
