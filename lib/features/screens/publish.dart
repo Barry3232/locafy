@@ -34,6 +34,11 @@ class _PublishScreenState extends State<PublishScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final FocusNode locationFocusNode = FocusNode();
   final service = ImagePickerService();
+  bool get _publishButtonStatus {
+    return _businessNameController.text.isNotEmpty &&
+        _phoneNumberController.text.isNotEmpty &&
+        _descriptionController.text.isNotEmpty;
+  }
 
   Future<void> imagePicker(int index) async {
     try {
@@ -128,7 +133,9 @@ class _PublishScreenState extends State<PublishScreen> {
   @override
   void initState() {
     super.initState();
-
+    _businessNameController.addListener(() => setState(() {}));
+    _descriptionController.addListener(() => setState(() {}));
+    _phoneNumberController.addListener(() => setState(() {}));
     locationFocusNode.addListener(() {
       setState(() {});
     });
@@ -137,6 +144,9 @@ class _PublishScreenState extends State<PublishScreen> {
   @override
   void dispose() {
     locationFocusNode.dispose();
+    _businessNameController.dispose();
+    _descriptionController.dispose();
+    _phoneNumberController.dispose();
     super.dispose();
   }
 
@@ -287,7 +297,6 @@ class _PublishScreenState extends State<PublishScreen> {
                         ],
                       ),
                     ),
-
                     SizedBox(height: 20),
 
                     Text(
@@ -301,10 +310,10 @@ class _PublishScreenState extends State<PublishScreen> {
                     SizedBox(height: 10),
 
                     TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      onChanged: (value) {
-                        _formKey.currentState?.validate();
-                      },
+                      autovalidateMode: AutovalidateMode.disabled,
+                      minLines: 1,
+                      maxLines: 1,
+                      maxLength: 20,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Business name is required";
@@ -317,6 +326,7 @@ class _PublishScreenState extends State<PublishScreen> {
                         fillColor: Colors.white,
                         filled: true,
                         isDense: true,
+                        counterText: '',
                         contentPadding: EdgeInsets.symmetric(
                           vertical: 11,
                           horizontal: 15,
@@ -486,7 +496,6 @@ class _PublishScreenState extends State<PublishScreen> {
                         ),
                       ],
                     ),
-
                     SizedBox(height: 20),
 
                     Text(
@@ -498,16 +507,10 @@ class _PublishScreenState extends State<PublishScreen> {
                     ),
                     SizedBox(height: 10),
                     TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      onChanged: (value) {
-                        _formKey.currentState?.validate();
-                      },
+                      autovalidateMode: AutovalidateMode.disabled,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Description is required";
-                        }
-                        if (value.length < 50) {
-                          return "Description must be at least 50 characters";
                         }
                         return null;
                       },
@@ -546,10 +549,7 @@ class _PublishScreenState extends State<PublishScreen> {
                     ),
                     SizedBox(height: 10),
                     TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      onChanged: (value) {
-                        _formKey.currentState?.validate();
-                      },
+                      autovalidateMode: AutovalidateMode.disabled,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Phone number is required";
@@ -746,123 +746,140 @@ class _PublishScreenState extends State<PublishScreen> {
 
                     SizedBox(height: 30),
                     InkWell(
-                      onTap: () async {
-                        if (!_formKey.currentState!.validate()) {
-                          return;
-                        }
+                      onTap: (_publishButtonStatus && !_isLoading)
+                          ? () async {
+                              if (!_formKey.currentState!.validate()) {
+                                return;
+                              }
 
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        try {
-                          if (coverPhoto == null) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please add a cover photo"),
-                              ),
-                            );
-                            return;
-                          }
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              try {
+                                if (coverPhoto == null) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Please add a cover photo"),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                          if (selectedImages.every((image) => image == null)) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please add business photos"),
-                              ),
-                            );
-                            return;
-                          }
+                                if (selectedImages.every(
+                                  (image) => image == null,
+                                )) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Please add business photos",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                          if (selectedAmenities.isEmpty) {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Select at least one amenity"),
-                              ),
-                            );
-                            return;
-                          }
+                                if (selectedAmenities.isEmpty) {
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        "Select at least one amenity",
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
 
-                          final docRef = FirebaseFirestore.instance
-                              .collection('businesses')
-                              .doc();
+                                final docRef = FirebaseFirestore.instance
+                                    .collection('businesses')
+                                    .doc();
 
-                          final businessId = docRef.id;
-                          final coverPhotoUrl = await cloudinaryService
-                              .uploadToCloudinary(coverPhoto!);
+                                final businessId = docRef.id;
+                                final coverPhotoUrl = await cloudinaryService
+                                    .uploadToCloudinary(coverPhoto!);
 
-                          final galleryUrls = await uploadBusinessImages();
-                          final currentUser = FirebaseAuth.instance.currentUser;
-                          if (currentUser == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please login first"),
-                              ),
-                            );
+                                final galleryUrls =
+                                    await uploadBusinessImages();
+                                final currentUser =
+                                    FirebaseAuth.instance.currentUser;
+                                if (currentUser == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Please login first"),
+                                    ),
+                                  );
 
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            return;
-                          }
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  return;
+                                }
 
-                          await docRef.set({
-                            'id': businessId,
-                            'ownerId': currentUser.uid,
-                            'businessName': _businessNameController.text.trim(),
-                            'category': selectedCategory,
-                            'businessType': selectedBusinessType,
-                            'description': _descriptionController.text.trim(),
-                            'phoneNumber': _phoneNumberController.text.trim(),
-                            'address': selectedAddress,
-                            'latitude': selectedLatitude,
-                            'longitude': selectedLongitude,
-                            'openingHours': selectedTime,
-                            'amenities': selectedAmenities,
-                            'coverPhotoUrl': coverPhotoUrl,
-                            'businessImages': galleryUrls,
-                            'createdAt': FieldValue.serverTimestamp(),
-                          });
+                                await docRef.set({
+                                  'id': businessId,
+                                  'ownerId': currentUser.uid,
+                                  'businessName': _businessNameController.text
+                                      .trim(),
+                                  'category': selectedCategory,
+                                  'businessType': selectedBusinessType,
+                                  'description': _descriptionController.text
+                                      .trim(),
+                                  'phoneNumber': _phoneNumberController.text
+                                      .trim(),
+                                  'address': selectedAddress,
+                                  'latitude': selectedLatitude,
+                                  'longitude': selectedLongitude,
+                                  'openingHours': selectedTime,
+                                  'amenities': selectedAmenities,
+                                  'coverPhotoUrl': coverPhotoUrl,
+                                  'businessImages': galleryUrls,
+                                  'createdAt': FieldValue.serverTimestamp(),
+                                });
 
-                          if (!mounted) return;
-                          await showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (_) => const SuccessWidget(
-                              text: 'Published Successfully',
-                            ),
-                          );
-                          if (!mounted) return;
+                                if (!mounted) return;
+                                await showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => const SuccessWidget(
+                                    text: 'Published Successfully',
+                                  ),
+                                );
+                                if (!mounted) return;
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => NavBarScreen()),
-                          );
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Unable to publish business'),
-                            ),
-                          );
-                        } finally {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      },
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => NavBarScreen(),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Unable to publish business'),
+                                  ),
+                                );
+                              } finally {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }
+                          : null,
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
-                          color: _isLoading ? Colors.grey : Color(0xFF0A4FD6),
+                          color: (!_publishButtonStatus)
+                              ? Colors.grey
+                              : Color(0xFF0A4FD6),
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Center(

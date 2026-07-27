@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/detail_map.dart';
 import 'package:locafy/features/screens/full_image.dart';
+import 'package:locafy/features/screens/message.dart';
 import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/features/services/review_service.dart';
 import 'package:locafy/helper/app_snackbar.dart';
@@ -356,7 +357,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             ),
                             Spacer(),
                             EnquiryItems(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: ((context) => MessagesScreen()),
+                                  ),
+                                );
+                              },
                               icon: Icons.message_outlined,
                               text: 'Message',
                             ),
@@ -372,7 +379,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       SizedBox(height: 12),
 
                       Container(
-                        height: 80,
                         padding: EdgeInsets.all(15),
                         width: double.infinity,
                         decoration: BoxDecoration(
@@ -386,30 +392,38 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
                             SizedBox(width: 8),
 
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.business.address ?? '',
-                                  style: TextStyle(fontSize: 13),
-                                ),
-                                SizedBox(height: 5),
-
-                                Text(
-                                  widget.business.distanc ??
-                                      widget.distanceText ??
-                                      '${widget.business.distance}',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 15,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.business.address ?? '',
+                                    maxLines: 2,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                              ],
+
+                                  SizedBox(height: 5),
+
+                                  Text(
+                                    widget.business.distanc ??
+                                        widget.distanceText ??
+                                        '${widget.business.distance}',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
 
-                            Spacer(),
-
-                            Icon(Icons.navigate_next),
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Icon(Icons.navigate_next),
+                            ),
                           ],
                         ),
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/home.dart';
+import 'package:locafy/features/screens/message.dart';
 import 'package:locafy/features/screens/profile.dart';
 import 'package:locafy/features/screens/publish.dart';
 
@@ -22,7 +23,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
       HomeScreen(),
       Container(color: Colors.green),
       PublishScreen(),
-      Container(color: Colors.orange),
+      MessagesScreen(),
       ProfileScreen(),
     ];
   }
