@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/features/screens/chat.dart';
 import 'package:locafy/features/screens/detail_map.dart';
 import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/features/screens/message.dart';
@@ -360,7 +361,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: ((context) => MessagesScreen()),
+                                    builder: ((context) =>
+                                        ChatScreen(business: widget.business)),
                                   ),
                                 );
                               },

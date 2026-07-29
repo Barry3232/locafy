@@ -68,31 +68,47 @@ class _MapSectionState extends State<MapSection> {
       await getAddress(location.latitude, location.longitude);
 
       setState(() {});
-    } catch (e) {
+    } catch (e, stack) {
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(SnackBar(content: Text("Location not found")));
+      print(e);
+      print(stack);
+
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Location not found")));
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
   Future<void> getAddress(double latitude, double longitude) async {
     try {
       final placemarks = await placemarkFromCoordinates(latitude, longitude);
-
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
 
         setState(() {
-          selectedStreet = place.street ?? '';
+          selectedStreet = place.street?.isNotEmpty == true
+              ? place.street!
+              : place.name?.isNotEmpty == true
+              ? place.name!
+              : place.subLocality?.isNotEmpty == true
+              ? place.subLocality!
+              : "Unknown location";
           selectedLocalityCountry =
               "${place.locality ?? ''}, ${place.country ?? ''}";
           selectedAddress =
               "${place.street}, "
               "${place.locality}, "
               "${place.country}";
+          print(selectedStreet);
+          print(selectedLocalityCountry);
         });
+        print("selectedAddress: $selectedAddress");
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Error occurred while fetching address: $e');
+      print(stackTrace);
       setState(() {
         selectedAddress = "Address unavailable";
       });
@@ -113,6 +129,7 @@ class _MapSectionState extends State<MapSection> {
                 selectedLocation = position.center;
               },
               onTap: (tapPosition, point) async {
+                print("Tapped: ${point.latitude}, ${point.longitude}");
                 selectedLocation = point;
                 await getAddress(point.latitude, point.longitude);
                 setState(() {});
@@ -223,13 +240,14 @@ class _MapSectionState extends State<MapSection> {
                             const SizedBox(height: 4),
 
                             Text(
-                              selectedStreet,
+                              selectedAddress,
                               style: TextStyle(
                                 color: Colors.grey[700],
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
                             ),
+
                             const SizedBox(height: 4),
                             Text(
                               selectedLocalityCountry,
