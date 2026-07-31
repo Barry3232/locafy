@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locafy/widgets/details_section/amenities_icon.dart';
 
 class BusinessModel {
+  final String ownerId;
   final String id;
   final String name;
   final String image;
@@ -29,6 +30,7 @@ class BusinessModel {
   final int? oneStar;
 
   BusinessModel({
+    required this.ownerId,
     required this.id,
     this.openingHours,
     required this.name,
@@ -58,6 +60,7 @@ class BusinessModel {
     final data = doc.data() as Map<String, dynamic>;
     return BusinessModel(
       id: doc.id,
+      ownerId: data['ownerId'] ?? '',
       name: data['businessName'] ?? '',
       image: data['coverPhotoUrl'] ?? '',
       category: data['category'] ?? '',

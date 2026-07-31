@@ -7,8 +7,8 @@ class ChatModel {
   final String businessImage;
   final String customerId;
   final String ownerId;
-  final String lastMessage;
-  final DateTime lastMessageTime;
+  final String? lastMessage;
+  final DateTime? lastMessageTime;
   final int unreadCount;
   final String lastMessageSenderId;
 
@@ -18,8 +18,8 @@ class ChatModel {
     required this.businessName,
     required this.businessImage,
     required this.customerId,
-    required this.lastMessage,
-    required this.lastMessageTime,
+    this.lastMessage,
+    this.lastMessageTime,
     required this.unreadCount,
     required this.ownerId,
     required this.lastMessageSenderId,
@@ -51,7 +51,7 @@ class ChatModel {
       'customerId': customerId,
       'ownerId': ownerId,
       'lastMessage': lastMessage,
-      'lastMessageTime': Timestamp.fromDate(lastMessageTime),
+      'lastMessageTime': Timestamp.fromDate(lastMessageTime!),
       'unreadCount': unreadCount,
     };
   }
