@@ -5,6 +5,7 @@ import 'package:locafy/features/screens/chat.dart';
 import 'package:locafy/features/screens/detail_map.dart';
 import 'package:locafy/features/screens/full_image.dart';
 import 'package:locafy/features/screens/message.dart';
+import 'package:locafy/features/services/chat_services.dart';
 import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/features/services/review_service.dart';
 import 'package:locafy/helper/app_snackbar.dart';
@@ -37,6 +38,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   List<File?> selectedImages = List.filled(3, null);
   final reviewController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  final ChatServices _chatServices = ChatServices();
 
   Widget ratingRow({
     required int star,
@@ -358,11 +360,17 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             ),
                             Spacer(),
                             EnquiryItems(
-                              onTap: () {
+                              onTap: () async {
+                                final chatId = await _chatServices.createChat(
+                                  widget.business,
+                                );
+
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: ((context) =>
-                                        ChatScreen(business: widget.business)),
+                                    builder: ((context) => ChatScreen(
+                                      business: widget.business,
+                                      chatId: chatId,
+                                    )),
                                   ),
                                 );
                               },

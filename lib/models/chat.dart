@@ -51,8 +51,11 @@ class ChatModel {
       'customerId': customerId,
       'ownerId': ownerId,
       'lastMessage': lastMessage,
-      'lastMessageTime': Timestamp.fromDate(lastMessageTime!),
+      'lastMessageTime': lastMessageTime == null
+          ? FieldValue.serverTimestamp()
+          : Timestamp.fromDate(lastMessageTime!),
       'unreadCount': unreadCount,
+      'lastMessageSenderId': lastMessageSenderId,
     };
   }
 }

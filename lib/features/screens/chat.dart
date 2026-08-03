@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/features/services/chat_services.dart';
 import 'package:locafy/models/business_model.dart';
+import 'package:locafy/models/message.dart';
 
 class ChatScreen extends StatefulWidget {
   final BusinessModel business;
+  final String chatId;
 
-  const ChatScreen({super.key, required this.business});
+  const ChatScreen({super.key, required this.business, required this.chatId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -15,9 +18,10 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
 
   final currentUser = FirebaseAuth.instance.currentUser!;
+  final ChatServices _chatServices = ChatServices();
 
   // Temporary messages
-  final List<Map<String, dynamic>> messages = [
+  final List<Map<String, dynamic>> demoMessages = [
     {"senderId": "business", "message": "Hello 👋", "time": "9:12 AM"},
     {"senderId": "me", "message": "Hi", "time": "9:13 AM"},
     {
@@ -31,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
     if (messageController.text.trim().isEmpty) return;
 
     setState(() {
-      messages.add({
+      demoMessages.add({
         "senderId": "me",
         "message": messageController.text.trim(),
         "time": "Now",
@@ -39,6 +43,47 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     messageController.clear();
+  }
+
+  Widget _buildMessageBubble({
+    required bool isMe,
+    required String message,
+    required String time,
+  }) {
+    return Align(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * .75,
+        ),
+        decoration: BoxDecoration(
+          color: isMe ? const Color(0xff0A4FD6) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              message,
+              style: TextStyle(
+                color: isMe ? Colors.white : Colors.black,
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              time,
+              style: TextStyle(
+                fontSize: 11,
+                color: isMe ? Colors.white70 : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -94,69 +139,52 @@ class _ChatScreenState extends State<ChatScreen> {
 
       body: Column(
         children: [
-          /// Messages
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
+            child: StreamBuilder<List<MessageModel>>(
+              stream: _chatServices.getMessages(widget.chatId),
+              builder: (context, snapshot) {
+                final firebaseMessages = snapshot.data ?? [];
 
-                final isMe = message["senderId"] == "me";
+                final useDemo = firebaseMessages.isEmpty;
 
-                return Align(
-                  alignment: isMe
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 12,
-                    ),
-
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * .75,
-                    ),
-
-                    decoration: BoxDecoration(
-                      color: isMe ? const Color(0xff0A4FD6) : Colors.white,
-
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-
-                      children: [
-                        Text(
-                          message["message"],
-                          style: TextStyle(
-                            color: isMe ? Colors.white : Colors.black,
-                            fontSize: 15,
-                          ),
-                        ),
-
-                        const SizedBox(height: 5),
-
-                        Text(
-                          message["time"],
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isMe ? Colors.white70 : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 20,
                   ),
+                  itemCount: useDemo
+                      ? demoMessages.length
+                      : firebaseMessages.length,
+                  itemBuilder: (context, index) {
+                    if (useDemo) {
+                      final message = demoMessages[index];
+
+                      final isMe = message["senderId"] == "me";
+
+                      return _buildMessageBubble(
+                        isMe: isMe,
+                        message: message["message"],
+                        time: message["time"],
+                      );
+                    }
+
+                    final message = firebaseMessages[index];
+
+                    final isMe = message.senderId == currentUser.uid;
+
+                    return _buildMessageBubble(
+                      isMe: isMe,
+                      message: message.text,
+                      time: TimeOfDay.fromDateTime(
+                        message.createdAt,
+                      ).format(context),
+                    );
+                  },
                 );
               },
             ),
           ),
-
-          /// Bottom Input
+          //     /// Bottom Input
           SafeArea(
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -200,7 +228,19 @@ class _ChatScreenState extends State<ChatScreen> {
                     backgroundColor: const Color(0xff0A4FD6),
 
                     child: IconButton(
-                      onPressed: sendMessage,
+                      onPressed: () async {
+                        final chatId = await _chatServices.createChat(
+                          widget.business,
+                        );
+
+                        await _chatServices.sendMessage(
+                          chatId: chatId,
+                          receiverId: widget.business.ownerId,
+                          text: messageController.text,
+                        );
+                        messageController.clear();
+                      },
+                      // sendMessage,
                       icon: const Icon(Icons.send, color: Colors.white),
                     ),
                   ),
@@ -210,6 +250,136 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
+      // Column(
+      //   children: [
+      //     /// Messages
+      //     Expanded(
+      //       child: ListView.builder(
+      //         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+      //         itemCount: demoMessages.length,
+      //         itemBuilder: (context, index) {
+      //           final message = demoMessages[index];
+
+      //           final isMe = message["senderId"] == "me";
+
+      //           return Align(
+      //             alignment: isMe
+      //                 ? Alignment.centerRight
+      //                 : Alignment.centerLeft,
+
+      //             child: Container(
+      //               margin: const EdgeInsets.only(bottom: 12),
+
+      //               padding: const EdgeInsets.symmetric(
+      //                 horizontal: 15,
+      //                 vertical: 12,
+      //               ),
+
+      //               constraints: BoxConstraints(
+      //                 maxWidth: MediaQuery.of(context).size.width * .75,
+      //               ),
+
+      //               decoration: BoxDecoration(
+      //                 color: isMe ? const Color(0xff0A4FD6) : Colors.white,
+
+      //                 borderRadius: BorderRadius.circular(18),
+      //               ),
+
+      //               child: Column(
+      //                 crossAxisAlignment: CrossAxisAlignment.end,
+
+      //                 children: [
+      //                   Text(
+      //                     message["message"],
+      //                     style: TextStyle(
+      //                       color: isMe ? Colors.white : Colors.black,
+      //                       fontSize: 15,
+      //                     ),
+      //                   ),
+
+      //                   const SizedBox(height: 5),
+
+      //                   Text(
+      //                     message["time"],
+      //                     style: TextStyle(
+      //                       fontSize: 11,
+      //                       color: isMe ? Colors.white70 : Colors.grey,
+      //                     ),
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //           );
+      //         },
+      //       ),
+      //     ),
+
+      //     /// Bottom Input
+      //     SafeArea(
+      //       child: Container(
+      //         padding: const EdgeInsets.all(10),
+
+      //         decoration: const BoxDecoration(color: Colors.white),
+
+      //         child: Row(
+      //           children: [
+      //             IconButton(
+      //               onPressed: () {},
+      //               icon: const Icon(Icons.attach_file),
+      //             ),
+
+      //             Expanded(
+      //               child: TextField(
+      //                 controller: messageController,
+
+      //                 decoration: InputDecoration(
+      //                   hintText: "Type a message",
+
+      //                   filled: true,
+      //                   fillColor: Colors.grey.shade200,
+
+      //                   contentPadding: const EdgeInsets.symmetric(
+      //                     horizontal: 18,
+      //                     vertical: 12,
+      //                   ),
+
+      //                   border: OutlineInputBorder(
+      //                     borderRadius: BorderRadius.circular(30),
+      //                     borderSide: BorderSide.none,
+      //                   ),
+      //                 ),
+      //               ),
+      //             ),
+
+      //             const SizedBox(width: 8),
+
+      //             CircleAvatar(
+      //               radius: 24,
+      //               backgroundColor: const Color(0xff0A4FD6),
+
+      //               child: IconButton(
+      //                 onPressed: () async {
+      //                   final chatId = await _chatServices.createChat(
+      //                     widget.business,
+      //                   );
+
+      //                   await _chatServices.sendMessage(
+      //                     chatId: chatId,
+      //                     receiverId: widget.business.ownerId,
+      //                     text: messageController.text,
+      //                   );
+      //                   messageController.clear();
+      //                 },
+      //                 // sendMessage,
+      //                 icon: const Icon(Icons.send, color: Colors.white),
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
