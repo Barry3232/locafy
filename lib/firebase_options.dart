@@ -57,22 +57,24 @@ class DefaultFirebaseOptions {
     projectId: 'locafy-ab51c',
     storageBucket: 'locafy-ab51c.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDmYVbI8JkDNIqqSPtjjwm3JTeWjiS96sU',
     appId: '1:632592536519:ios:6521fe07cdccb0084c3fe2',
     messagingSenderId: '632592536519',
     projectId: 'locafy-ab51c',
     storageBucket: 'locafy-ab51c.firebasestorage.app',
+    androidClientId: '632592536519-gud5lmqqevedup50f1pva70u65q477uj.apps.googleusercontent.com',
+    iosClientId: '632592536519-pqlfhf3oepkp6008fehkpkqv264t6sc1.apps.googleusercontent.com',
     iosBundleId: 'com.example.locafy',
   );
-
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDmYVbI8JkDNIqqSPtjjwm3JTeWjiS96sU',
     appId: '1:632592536519:ios:6521fe07cdccb0084c3fe2',
     messagingSenderId: '632592536519',
     projectId: 'locafy-ab51c',
     storageBucket: 'locafy-ab51c.firebasestorage.app',
+    androidClientId: '632592536519-gud5lmqqevedup50f1pva70u65q477uj.apps.googleusercontent.com',
+    iosClientId: '632592536519-pqlfhf3oepkp6008fehkpkqv264t6sc1.apps.googleusercontent.com',
     iosBundleId: 'com.example.locafy',
   );
 
