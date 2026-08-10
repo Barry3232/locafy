@@ -1,41 +1,54 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locafy/features/screens/chat.dart';
+import 'package:locafy/features/services/chat_services.dart';
+import 'package:locafy/models/chat.dart';
 import 'package:locafy/widgets/message_section/message_tile.dart';
 
-class MessagesScreen extends StatelessWidget {
+class MessagesScreen extends StatefulWidget {
+  // final String chatId;
   const MessagesScreen({super.key});
 
   @override
+  State<MessagesScreen> createState() => _MessagesScreenState();
+}
+
+class _MessagesScreenState extends State<MessagesScreen> {
+  final ChatServices _message = ChatServices();
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  @override
   Widget build(BuildContext context) {
-    final chats = [
-      {
-        "name": "Aroma Café",
-        "message": "Your reservation is confirmed.",
-        "time": "2m",
-        "unread": 2,
-        "online": true,
-      },
-      {
-        "name": "Grand Hotel",
-        "message": "Rooms are available this weekend.",
-        "time": "10:45",
-        "unread": 0,
-        "online": false,
-      },
-      {
-        "name": "Burger Hub",
-        "message": "Your order will be ready in 15 mins.",
-        "time": "Yesterday",
-        "unread": 1,
-        "online": true,
-      },
-      {
-        "name": "Luxe Salon",
-        "message": "Can we reschedule your appointment?",
-        "time": "Monday",
-        "unread": 0,
-        "online": false,
-      },
-    ];
+    // final chats = [
+    //   {
+    //     "name": "Aroma Café",
+    //     "message": "Your reservation is confirmed.",
+    //     "time": "2m",
+    //     "unread": 2,
+    //     "online": true,
+    //   },
+    //   {
+    //     "name": "Grand Hotel",
+    //     "message": "Rooms are available this weekend.",
+    //     "time": "10:45",
+    //     "unread": 0,
+    //     "online": false,
+    //   },
+    //   {
+    //     "name": "Burger Hub",
+    //     "message": "Your order will be ready in 15 mins.",
+    //     "time": "Yesterday",
+    //     "unread": 1,
+    //     "online": true,
+    //   },
+    //   {
+    //     "name": "Luxe Salon",
+    //     "message": "Can we reschedule your appointment?",
+    //     "time": "Monday",
+    //     "unread": 0,
+    //     "online": false,
+    //   },
+    // ];
 
     return Scaffold(
       backgroundColor: const Color(0xffF6F7FB),
@@ -82,42 +95,51 @@ class MessagesScreen extends StatelessWidget {
         ],
       ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search conversations",
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
+      body: StreamBuilder<List<ChatModel>>(
+        stream: _message.getChats(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(child: Text('Error Loading Messages'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Start a conversation'));
+          }
 
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return Center(child: CircularProgressIndicator());
+          // }
+          final chats = snapshot.data!;
+          return ListView.builder(
+            // final chats = snapshot.data!;
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
 
-          Expanded(
-            child: ListView.builder(
-              itemCount: chats.length,
-              itemBuilder: (context, index) {
-                final chat = chats[index];
+            itemCount: chats.length,
 
-                return MessageTile(
-                  businessName: chat["name"] as String,
-                  lastMessage: chat["message"] as String,
-                  time: chat["time"] as String,
-                  unread: chat["unread"] as int,
-                  online: chat["online"] as bool,
-                );
-              },
-            ),
-          ),
-        ],
+            itemBuilder: (context, index) {
+              final chat = chats[index];
+
+              return MessageTile(
+                businessName: chat.businessName,
+                lastMessage: chat.lastMessage ?? '',
+                time: chat.lastMessageTime == null
+                    ? ''
+                    : TimeOfDay.fromDateTime(
+                        chat.lastMessageTime!,
+                      ).format(context),
+                unread: chat.unreadCount,
+                online: false,
+                onTap: () async {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(chat: chat),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }

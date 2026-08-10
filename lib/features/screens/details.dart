@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:locafy/features/screens/chat.dart';
 import 'package:locafy/features/screens/detail_map.dart';
 import 'package:locafy/features/screens/full_image.dart';
-import 'package:locafy/features/screens/message.dart';
 import 'package:locafy/features/services/chat_services.dart';
 import 'package:locafy/features/services/image_picker.dart';
 import 'package:locafy/features/services/review_service.dart';
@@ -361,15 +360,18 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             Spacer(),
                             EnquiryItems(
                               onTap: () async {
-                                final chatId = await _chatServices.createChat(
+                                final chat = await _chatServices.createChat(
                                   widget.business,
                                 );
+
+                                if (!context.mounted) return;
 
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: ((context) => ChatScreen(
-                                      business: widget.business,
-                                      chatId: chatId,
+                                      chat: chat,
+                                      // business: widget.business,
+                                      // chatId: chatId,
                                     )),
                                   ),
                                 );

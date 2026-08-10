@@ -35,7 +35,7 @@ class ChatModel {
       customerId: data['customerId'] ?? '',
       lastMessage: data['lastMessage'] ?? '',
       lastMessageTime:
-          (data['createdAt'] as Timestamp?)?.toDate() ??
+          (data['lastMessageTime'] as Timestamp?)?.toDate() ??
           DateTime.fromMillisecondsSinceEpoch(0),
       unreadCount: data['unreadCount'] ?? 0,
       ownerId: data['ownerId'] ?? '',

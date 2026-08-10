@@ -6,6 +6,7 @@ class MessageTile extends StatelessWidget {
   final String time;
   final int unread;
   final bool online;
+  final VoidCallback? onTap;
 
   const MessageTile({
     super.key,
@@ -14,12 +15,13 @@ class MessageTile extends StatelessWidget {
     required this.time,
     required this.unread,
     required this.online,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
 
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 6),

@@ -8,7 +8,7 @@ class ChatServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<String> createChat(BusinessModel business) async {
+  Future<ChatModel> createChat(BusinessModel business) async {
     final currentUser = _firebaseAuth.currentUser;
 
     if (currentUser == null) {
@@ -18,9 +18,10 @@ class ChatServices {
     final chatId = "${currentUser.uid}_${business.id}";
 
     final chatRef = _firestore.collection("chats").doc(chatId);
+    final chatSnapshot = await chatRef.get();
 
-    if ((await chatRef.get()).exists) {
-      return chatId;
+    if (chatSnapshot.exists) {
+      return ChatModel.fromFirestore(chatSnapshot);
     }
 
     final chat = ChatModel(
@@ -38,7 +39,7 @@ class ChatServices {
 
     await chatRef.set(chat.toFirestore());
 
-    return chatId;
+    return chat;
   }
 
   Future<void> sendMessage({
@@ -99,6 +100,10 @@ class ChatServices {
   }
 
   Stream<List<MessageModel>> getMessages(String chatId) {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser == null) {
+      return Stream.empty();
+    }
     return _firestore
         .collection("chats")
         .doc(chatId)

@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locafy/features/services/chat_services.dart';
-import 'package:locafy/models/business_model.dart';
+import 'package:locafy/models/chat.dart';
 import 'package:locafy/models/message.dart';
 
 class ChatScreen extends StatefulWidget {
-  final BusinessModel business;
-  final String chatId;
+  // final BusinessModel business;
+  // final String chatId;
+  final ChatModel chat;
 
-  const ChatScreen({super.key, required this.business, required this.chatId});
+  const ChatScreen({super.key, required this.chat});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -100,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             CircleAvatar(
               radius: 22,
-              backgroundImage: NetworkImage(widget.business.image),
+              backgroundImage: NetworkImage(widget.chat.businessImage),
             ),
 
             const SizedBox(width: 12),
@@ -110,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.business.name,
+                    widget.chat.businessName,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.black,
@@ -141,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: StreamBuilder<List<MessageModel>>(
-              stream: _chatServices.getMessages(widget.chatId),
+              stream: _chatServices.getMessages(widget.chat.id),
               builder: (context, snapshot) {
                 final firebaseMessages = snapshot.data ?? [];
 
@@ -229,13 +230,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     child: IconButton(
                       onPressed: () async {
-                        final chatId = await _chatServices.createChat(
-                          widget.business,
-                        );
+                        if (messageController.text.trim().isEmpty) return;
 
                         await _chatServices.sendMessage(
-                          chatId: chatId,
-                          receiverId: widget.business.ownerId,
+                          chatId: widget.chat.id,
+                          receiverId: widget.chat.ownerId,
                           text: messageController.text,
                         );
                         messageController.clear();
@@ -250,136 +249,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-      // Column(
-      //   children: [
-      //     /// Messages
-      //     Expanded(
-      //       child: ListView.builder(
-      //         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-      //         itemCount: demoMessages.length,
-      //         itemBuilder: (context, index) {
-      //           final message = demoMessages[index];
-
-      //           final isMe = message["senderId"] == "me";
-
-      //           return Align(
-      //             alignment: isMe
-      //                 ? Alignment.centerRight
-      //                 : Alignment.centerLeft,
-
-      //             child: Container(
-      //               margin: const EdgeInsets.only(bottom: 12),
-
-      //               padding: const EdgeInsets.symmetric(
-      //                 horizontal: 15,
-      //                 vertical: 12,
-      //               ),
-
-      //               constraints: BoxConstraints(
-      //                 maxWidth: MediaQuery.of(context).size.width * .75,
-      //               ),
-
-      //               decoration: BoxDecoration(
-      //                 color: isMe ? const Color(0xff0A4FD6) : Colors.white,
-
-      //                 borderRadius: BorderRadius.circular(18),
-      //               ),
-
-      //               child: Column(
-      //                 crossAxisAlignment: CrossAxisAlignment.end,
-
-      //                 children: [
-      //                   Text(
-      //                     message["message"],
-      //                     style: TextStyle(
-      //                       color: isMe ? Colors.white : Colors.black,
-      //                       fontSize: 15,
-      //                     ),
-      //                   ),
-
-      //                   const SizedBox(height: 5),
-
-      //                   Text(
-      //                     message["time"],
-      //                     style: TextStyle(
-      //                       fontSize: 11,
-      //                       color: isMe ? Colors.white70 : Colors.grey,
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           );
-      //         },
-      //       ),
-      //     ),
-
-      //     /// Bottom Input
-      //     SafeArea(
-      //       child: Container(
-      //         padding: const EdgeInsets.all(10),
-
-      //         decoration: const BoxDecoration(color: Colors.white),
-
-      //         child: Row(
-      //           children: [
-      //             IconButton(
-      //               onPressed: () {},
-      //               icon: const Icon(Icons.attach_file),
-      //             ),
-
-      //             Expanded(
-      //               child: TextField(
-      //                 controller: messageController,
-
-      //                 decoration: InputDecoration(
-      //                   hintText: "Type a message",
-
-      //                   filled: true,
-      //                   fillColor: Colors.grey.shade200,
-
-      //                   contentPadding: const EdgeInsets.symmetric(
-      //                     horizontal: 18,
-      //                     vertical: 12,
-      //                   ),
-
-      //                   border: OutlineInputBorder(
-      //                     borderRadius: BorderRadius.circular(30),
-      //                     borderSide: BorderSide.none,
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-
-      //             const SizedBox(width: 8),
-
-      //             CircleAvatar(
-      //               radius: 24,
-      //               backgroundColor: const Color(0xff0A4FD6),
-
-      //               child: IconButton(
-      //                 onPressed: () async {
-      //                   final chatId = await _chatServices.createChat(
-      //                     widget.business,
-      //                   );
-
-      //                   await _chatServices.sendMessage(
-      //                     chatId: chatId,
-      //                     receiverId: widget.business.ownerId,
-      //                     text: messageController.text,
-      //                   );
-      //                   messageController.clear();
-      //                 },
-      //                 // sendMessage,
-      //                 icon: const Icon(Icons.send, color: Colors.white),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }
