@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MessageTile extends StatelessWidget {
+  final String businessImage;
   final String businessName;
   final String lastMessage;
   final String time;
@@ -10,6 +11,7 @@ class MessageTile extends StatelessWidget {
 
   const MessageTile({
     super.key,
+    required this.businessImage,
     required this.businessName,
     required this.lastMessage,
     required this.time,
@@ -29,6 +31,14 @@ class MessageTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
 
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
         ),
@@ -37,10 +47,10 @@ class MessageTile extends StatelessWidget {
           children: [
             Stack(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 28,
                   backgroundColor: Color(0xff0A4FD6),
-                  child: Icon(Icons.store, color: Colors.white),
+                  backgroundImage: NetworkImage(businessImage),
                 ),
 
                 if (online)

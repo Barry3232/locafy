@@ -16,6 +16,8 @@ class MessagesScreen extends StatefulWidget {
 class _MessagesScreenState extends State<MessagesScreen> {
   final ChatServices _message = ChatServices();
   final currentUser = FirebaseAuth.instance.currentUser!;
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,74 +53,140 @@ class _MessagesScreenState extends State<MessagesScreen> {
     // ];
 
     return Scaffold(
-      backgroundColor: const Color(0xffF6F7FB),
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
+        toolbarHeight: 120,
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Messages",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Messages",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Chat with businesses",
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'read':
+                        break;
+                      case 'settings':
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 'read',
+                      child: Text('Mark all as read'),
+                    ),
+                    PopupMenuItem(value: 'settings', child: Text('Settings')),
+                  ],
+                ),
+              ],
             ),
-            Text(
-              "Chat with businesses",
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+
+            const SizedBox(height: 8),
+
+            Center(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search conversations',
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                    prefixIcon: const Icon(Icons.search, size: 25),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 25),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: const Color(0xffF5F5F5),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 0,
+                      horizontal: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: const BorderSide(color: Color(0xff0A4FD6)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                      borderSide: const BorderSide(color: Color(0xffE0E0E0)),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert),
-            onSelected: (value) {
-              switch (value) {
-                case 'read':
-                  // Mark all as read
-                  break;
-                case 'settings':
-                  // Open settings
-                  break;
-              }
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'read', child: Text('Mark all as read')),
-              PopupMenuItem(value: 'settings', child: Text('Settings')),
-            ],
-          ),
-        ],
       ),
 
       body: StreamBuilder<List<ChatModel>>(
         stream: _message.getChats(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            print('${snapshot.error}');
             return Center(child: Text('Error Loading Messages'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('Start a conversation'));
           }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOut,
+            );
+          });
 
-          // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return Center(child: CircularProgressIndicator());
-          // }
           final chats = snapshot.data!;
           return ListView.builder(
-            // final chats = snapshot.data!;
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-
+            physics: const ClampingScrollPhysics(),
+            controller: _scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
             itemCount: chats.length,
-
             itemBuilder: (context, index) {
               final chat = chats[index];
 
               return MessageTile(
+                businessImage: chat.businessImage,
                 businessName: chat.businessName,
                 lastMessage: chat.lastMessage ?? '',
                 time: chat.lastMessageTime == null
