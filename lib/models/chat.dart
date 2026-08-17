@@ -9,7 +9,8 @@ class ChatModel {
   final String ownerId;
   final String? lastMessage;
   final DateTime? lastMessageTime;
-  final int unreadCount;
+  final int ownerUnreadCount;
+  final int customerUnreadCount;
   final String lastMessageSenderId;
 
   ChatModel({
@@ -20,7 +21,8 @@ class ChatModel {
     required this.customerId,
     this.lastMessage,
     this.lastMessageTime,
-    required this.unreadCount,
+    required this.ownerUnreadCount,
+    required this.customerUnreadCount,
     required this.ownerId,
     required this.lastMessageSenderId,
   });
@@ -37,7 +39,8 @@ class ChatModel {
       lastMessageTime:
           (data['lastMessageTime'] as Timestamp?)?.toDate() ??
           DateTime.fromMillisecondsSinceEpoch(0),
-      unreadCount: data['unreadCount'] ?? 0,
+      ownerUnreadCount: data['ownerUnreadCount'] ?? 0,
+      customerUnreadCount: data['customerUnreadCount'] ?? 0,
       ownerId: data['ownerId'] ?? '',
       lastMessageSenderId: data['lastMessageSenderId'] ?? '',
     );
@@ -54,7 +57,8 @@ class ChatModel {
       'lastMessageTime': lastMessageTime == null
           ? FieldValue.serverTimestamp()
           : Timestamp.fromDate(lastMessageTime!),
-      'unreadCount': unreadCount,
+      'ownerUnreadCount': ownerUnreadCount,
+      'customerUnreadCount': customerUnreadCount,
       'lastMessageSenderId': lastMessageSenderId,
     };
   }

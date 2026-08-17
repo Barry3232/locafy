@@ -33,7 +33,8 @@ class ChatServices {
       ownerId: business.ownerId,
       lastMessage: "",
       lastMessageTime: DateTime.now(),
-      unreadCount: 0,
+      ownerUnreadCount: 0,
+      customerUnreadCount: 0,
       lastMessageSenderId: "",
     );
 
@@ -56,7 +57,8 @@ class ChatServices {
     if (text.trim().isEmpty) return;
 
     final chatRef = _firestore.collection("chats").doc(chatId);
-
+    final chatSnapshot = await chatRef.get();
+    final chat = ChatModel.fromFirestore(chatSnapshot);
     final messageRef = chatRef.collection("messages").doc();
 
     final message = MessageModel(
@@ -72,12 +74,21 @@ class ChatServices {
     await messageRef.set(message.toFirestore());
 
     // Update the chat preview
-    await chatRef.update({
-      "lastMessage": text.trim(),
-      "lastMessageTime": FieldValue.serverTimestamp(),
-      "lastMessageSenderId": currentUser.uid,
-      "unreadCount": FieldValue.increment(1),
-    });
+    if (currentUser.uid == chat.customerId) {
+      await chatRef.update({
+        "lastMessage": text.trim(),
+        "lastMessageTime": FieldValue.serverTimestamp(),
+        "lastMessageSenderId": currentUser.uid,
+        "ownerUnreadCount": FieldValue.increment(1),
+      });
+    } else if (currentUser.uid == chat.ownerId) {
+      await chatRef.update({
+        "lastMessage": text.trim(),
+        "lastMessageTime": FieldValue.serverTimestamp(),
+        "lastMessageSenderId": currentUser.uid,
+        "customerUnreadCount": FieldValue.increment(1),
+      });
+    }
   }
 
   Stream<List<ChatModel>> getChats() {
@@ -115,5 +126,30 @@ class ChatServices {
               .map((doc) => MessageModel.fromFirestore(doc))
               .toList();
         });
+  }
+
+  Future<void> markMessagesAsSeen(String chatId, snapshot) async {
+    final currentUser = _firebaseAuth.currentUser!;
+    final messageRef = _firestore
+        .collection("chats")
+        .doc(chatId)
+        .collection("messages");
+
+    final snapshot = await messageRef
+        .where("receiverId", isEqualTo: currentUser.uid)
+        .where("seen", isEqualTo: false)
+        .get();
+
+    for (final doc in snapshot.docs) {
+      // final message = MessageModel.fromFirestore(doc);
+      // print(message.text);
+      await doc.reference.update({"seen": true});
+    }
+
+    final chatSnapshot = await _firestore.collection("chats").doc(chatId).get();
+
+    final chat = ChatModel.fromFirestore(chatSnapshot);
+    if (chat.customerId == currentUser.uid) {
+    } else if (chat.ownerId == currentUser.uid) {}
   }
 }

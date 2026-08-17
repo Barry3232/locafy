@@ -184,6 +184,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
             itemCount: chats.length,
             itemBuilder: (context, index) {
               final chat = chats[index];
+              final isCustomer = chat.customerId == currentUser.uid;
+              final unread = isCustomer
+                  ? chat.customerUnreadCount
+                  : chat.ownerUnreadCount;
 
               return MessageTile(
                 businessImage: chat.businessImage,
@@ -194,7 +198,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     : TimeOfDay.fromDateTime(
                         chat.lastMessageTime!,
                       ).format(context),
-                unread: chat.unreadCount,
+                unread: chat.customerId == currentUser.uid
+                    ? chat.customerUnreadCount
+                    : chat.ownerUnreadCount,
                 online: false,
                 onTap: () async {
                   Navigator.push(
