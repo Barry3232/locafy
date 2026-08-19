@@ -370,8 +370,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   MaterialPageRoute(
                                     builder: ((context) => ChatScreen(
                                       chat: chat,
+                                      chatId: chat.id,
                                       // business: widget.business,
-                                      // chatId: chatId,
                                     )),
                                   ),
                                 );

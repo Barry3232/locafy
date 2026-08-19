@@ -6,10 +6,10 @@ import 'package:locafy/models/message.dart';
 
 class ChatScreen extends StatefulWidget {
   // final BusinessModel business;
-  // final String chatId;
+  final String chatId;
   final ChatModel chat;
 
-  const ChatScreen({super.key, required this.chat});
+  const ChatScreen({super.key, required this.chatId, required this.chat});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -20,6 +20,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final currentUser = FirebaseAuth.instance.currentUser!;
   final ChatServices _chatServices = ChatServices();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _chatServices.markMessagesAsSeen(widget.chatId);
+  }
 
   // Temporary messages
   final List<Map<String, dynamic>> demoMessages = [

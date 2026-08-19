@@ -128,7 +128,7 @@ class ChatServices {
         });
   }
 
-  Future<void> markMessagesAsSeen(String chatId, snapshot) async {
+  Future<void> markMessagesAsSeen(String chatId) async {
     final currentUser = _firebaseAuth.currentUser!;
     final messageRef = _firestore
         .collection("chats")
@@ -150,6 +150,13 @@ class ChatServices {
 
     final chat = ChatModel.fromFirestore(chatSnapshot);
     if (chat.customerId == currentUser.uid) {
-    } else if (chat.ownerId == currentUser.uid) {}
+      await _firestore.collection("chats").doc(chatId).update({
+        "customerUnreadCount": 0,
+      });
+    } else if (chat.ownerId == currentUser.uid) {
+      await _firestore.collection("chats").doc(chatId).update({
+        "ownerUnreadCount": 0,
+      });
+    }
   }
 }

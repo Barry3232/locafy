@@ -206,7 +206,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ChatScreen(chat: chat),
+                      builder: (context) =>
+                          ChatScreen(chat: chat, chatId: chat.id),
                     ),
                   );
                 },
