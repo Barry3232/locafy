@@ -3,21 +3,37 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locafy/models/business_model.dart';
 
 class CategoryService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // Future<void> getCategory(BusinessModel business) async {
+  //   final currentUser = _auth.currentUser;
+  //   if (currentUser == null) {
+  //     throw Exception("User is not logged in");
+  //   }
 
-  Future<void> getCategory(BusinessModel business) async {
-    final currentUser = _auth.currentUser;
+  //   final businesses = await FirebaseFirestore.instance
+  //       .collection("businesses")
+  //       .where("category", isEqualTo: business.category)
+  //       .get();
+
+  //   if (businesses.docs.isEmpty) {
+  //     throw Exception("No businesses found for this category");
+  //   }
+  // }
+
+  Stream<List<BusinessModel>> getCategory(String category) {
+    final currentUser = _firebaseAuth.currentUser;
     if (currentUser == null) {
-      throw Exception("User is not logged in");
+      return Stream.empty();
     }
-
-    final businesses = await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection("businesses")
-        .where("category", isEqualTo: business.category)
-        .get();
-
-    if (businesses.docs.isEmpty) {
-      throw Exception("No businesses found for this category");
-    }
+        .where("category", isEqualTo: category)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => BusinessModel.fromFirestore(doc))
+              .toList(),
+        );
   }
 }

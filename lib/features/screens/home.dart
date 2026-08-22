@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:locafy/data/dummy_data.dart';
+import 'package:locafy/features/screens/categories_screen.dart';
 import 'package:locafy/features/screens/details.dart';
 import 'package:locafy/features/screens/popular.dart';
 import 'package:locafy/widgets/category_section.dart';
@@ -318,28 +319,62 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icons.restaurant_outlined,
                         color: Color(0x14FF9800),
                         iconColor: Color(0xFFFF9800),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CategoriesScreen(
+                                  category: 'Restaurants',
+                                );
+                              },
+                            ),
+                          );
+                        },
                       ),
                       CategoryItems(
                         title: 'Hotels',
                         icon: Icons.hotel_outlined,
                         color: Color(0x1400B0FF),
                         iconColor: Color(0xFF00B0FF),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CategoriesScreen(category: 'Hotels');
+                              },
+                            ),
+                          );
+                        },
                       ),
                       CategoryItems(
                         title: 'Shops',
                         icon: Icons.shopping_bag_outlined,
                         color: Color(0x1400C853),
                         iconColor: Color(0xFF00C853),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CategoriesScreen(category: 'Shop');
+                              },
+                            ),
+                          );
+                        },
                       ),
                       CategoryItems(
                         title: 'Services',
                         icon: Icons.handyman_outlined,
                         color: Color(0x14FF4081),
                         iconColor: Color(0xFFFF4081),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return CategoriesScreen(category: 'Services');
+                              },
+                            ),
+                          );
+                        },
                       ),
                       CategoryItems(
                         title: 'More',
