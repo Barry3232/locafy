@@ -1,23 +1,66 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:locafy/features/screens/details.dart';
 import 'package:locafy/features/services/category_service.dart';
-import 'package:locafy/models/business_model.dart';
 import 'package:locafy/widgets/home_section/category_wiget.dart';
 
 class CategoriesScreen extends StatefulWidget {
   // final BusinessModel business;
   final String category;
-  const CategoriesScreen({super.key, required this.category});
+  final IconData icon;
+  final String title;
+  final Color color;
+  final Color iconColor;
+  const CategoriesScreen({
+    super.key,
+    required this.category,
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.iconColor,
+  });
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
+  Position? userPosition; // Store the position here
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation(); // Fetch location when screen loads
+  }
+
+  Future<void> getUserLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      setState(() {
+        userPosition = position;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Categories')),
+      appBar: AppBar(
+        title: const Text(
+          'Categories',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: StreamBuilder(
@@ -32,7 +75,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No businesses found.'));
+              return Padding(
+                padding: const EdgeInsets.only(left: 35.0, right: 35.0),
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(
+                      image: AssetImage('assets/images/house.png'),
+                      height: 200,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'No businesses found',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      textAlign: TextAlign.center,
+                      'We couldn\'t find any businesses in this category yet.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              );
             }
 
             final businesses = snapshot.data!;
@@ -41,15 +109,62 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               itemCount: businesses.length,
               itemBuilder: (context, index) {
                 final business = businesses[index];
-                return CategoryWidget(
-                  category: business.category,
-                  image: business.image,
-                  businessName: business.name,
-                  distance: "${business.distance} km",
-                  rating: "${business.rating} ",
-                  onTap: () {
-                    // Handle tap event, e.g., navigate to business details
-                  },
+                print(businesses.length);
+                final distanceCal = business.getFormattedDistance(userPosition);
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 35,
+                          backgroundColor: widget.color,
+                          child: Icon(
+                            widget.icon,
+                            size: 30,
+                            color: widget.iconColor,
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.title,
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "${businesses.length} ${businesses.length == 1 ? 'business' : 'businesses'} found",
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 25),
+                    CategoryWidget(
+                      category: business.category,
+                      image: business.image,
+                      businessName: business.name,
+                      distance: "$distanceCal km",
+                      rating: "${business.rating} ",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailsScreen(
+                              business: business,
+                              distanceText: "$distanceCal km",
+                            ),
+                          ),
+                        );
+                        // Handle tap event, e.g., navigate to business details
+                      },
+                    ),
+                  ],
                 );
               },
             );

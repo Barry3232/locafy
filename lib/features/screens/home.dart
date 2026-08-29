@@ -51,45 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    userPosition = await Geolocator.getCurrentPosition();
-
-    setState(() {});
-    print('USER LAT: ${userPosition!.latitude}');
-    print('USER LNG: ${userPosition!.longitude}');
-  }
-
-  double getDistance(BusinessModel business) {
-    if (userPosition == null ||
-        business.latitude == null ||
-        business.longitude == null) {
-      return 0;
+    final position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      setState(() {
+        userPosition = position;
+      });
     }
-
-    return Geolocator.distanceBetween(
-      userPosition!.latitude,
-      userPosition!.longitude,
-      business.latitude!,
-      business.longitude!,
-    );
-  }
-
-  String formatDistance(Position userPosition, BusinessModel business) {
-    if (business.latitude == null || business.longitude == null) {
-      return business.distanc ?? '';
-    }
-
-    final meters = Geolocator.distanceBetween(
-      userPosition.latitude,
-      userPosition.longitude,
-      business.latitude!,
-      business.longitude!,
-    );
-
-    if (meters < 1000) {
-      return '${meters.round()} m away';
-    }
-
-    return '${(meters / 1000).toStringAsFixed(1)} km';
+    print('USER LAT: ${userPosition?.latitude}');
+    print('USER LNG: ${userPosition?.longitude}');
   }
 
   @override
@@ -324,7 +293,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             MaterialPageRoute(
                               builder: (context) {
                                 return CategoriesScreen(
+                                  color: Color(0x14FF9800),
+                                  iconColor: Color(0xFFFF9800),
                                   category: 'Restaurants',
+                                  icon: Icons.restaurant_outlined,
+                                  title: 'Restaurants',
                                 );
                               },
                             ),
@@ -340,7 +313,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return CategoriesScreen(category: 'Hotels');
+                                return CategoriesScreen(
+                                  color: Color(0x1400B0FF),
+                                  iconColor: Color(0xFF00B0FF),
+                                  category: 'Hotels',
+                                  icon: Icons.hotel_outlined,
+                                  title: 'Hotels',
+                                );
                               },
                             ),
                           );
@@ -355,7 +334,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return CategoriesScreen(category: 'Shop');
+                                return CategoriesScreen(
+                                  color: Color(0x1400C853),
+                                  iconColor: Color(0xFF00C853),
+                                  category: 'Shop',
+                                  icon: Icons.shopping_bag_outlined,
+                                  title: 'Shops',
+                                );
                               },
                             ),
                           );
@@ -370,7 +355,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
-                                return CategoriesScreen(category: 'Services');
+                                return CategoriesScreen(
+                                  color: Color(0x14FF4081),
+                                  iconColor: Color(0xFFFF4081),
+                                  category: 'Services',
+                                  icon: Icons.handyman_outlined,
+                                  title: 'Services',
+                                );
                               },
                             ),
                           );
@@ -423,9 +414,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: popularBusinesses.map((business) {
-                        final distanceText = userPosition == null
-                            ? business.distanc ?? ''
-                            : formatDistance(userPosition!, business);
+                        final distanceText = business.getFormattedDistance(
+                          userPosition,
+                        );
                         return Padding(
                           padding: const EdgeInsets.only(right: 15),
                           child: PopularItems(
@@ -463,12 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) {
                             return DetailsScreen(
                               business: businesses[4],
-                              distanceText: userPosition == null
-                                  ? businesses[4].distanc ?? ''
-                                  : formatDistance(
-                                      userPosition!,
-                                      businesses[4],
-                                    ),
+                              distanceText: businesses[4].distanc ?? '',
                             );
                           },
                         ),
@@ -486,12 +472,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) {
                             return DetailsScreen(
                               business: businesses[5],
-                              distanceText: userPosition == null
-                                  ? businesses[5].distanc ?? ''
-                                  : formatDistance(
-                                      userPosition!,
-                                      businesses[5],
-                                    ),
+                              distanceText: businesses[5].distanc ?? '',
                             );
                           },
                         ),
@@ -509,12 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) {
                             return DetailsScreen(
                               business: businesses[6],
-                              distanceText: userPosition == null
-                                  ? businesses[6].distanc ?? ''
-                                  : formatDistance(
-                                      userPosition!,
-                                      businesses[6],
-                                    ),
+                              distanceText: businesses[6].distanc ?? '',
                             );
                           },
                         ),
@@ -532,12 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) {
                             return DetailsScreen(
                               business: businesses[7],
-                              distanceText: userPosition == null
-                                  ? businesses[7].distanc ?? ''
-                                  : formatDistance(
-                                      userPosition!,
-                                      businesses[7],
-                                    ),
+                              distanceText: businesses[7].distanc ?? '',
                             );
                           },
                         ),

@@ -2,6 +2,7 @@ import 'package:locafy/models/features_model.dart';
 import 'package:locafy/models/pictures_modle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locafy/widgets/details_section/amenities_icon.dart';
+import 'package:geolocator/geolocator.dart';
 
 class BusinessModel {
   final String ownerId;
@@ -87,5 +88,24 @@ class BusinessModel {
               .toList() ??
           [],
     );
+  }
+
+  String getFormattedDistance(Position? userPosition) {
+    if (userPosition == null || latitude == null || longitude == null) {
+      return distanc ?? '0 m away';
+    }
+
+    final meters = Geolocator.distanceBetween(
+      userPosition.latitude,
+      userPosition.longitude,
+      latitude!,
+      longitude!,
+    );
+
+    if (meters < 1000) {
+      return '${meters.round()} m away';
+    }
+
+    return '${(meters / 1000).toStringAsFixed(1)} km';
   }
 }
