@@ -3,6 +3,7 @@ import 'package:locafy/features/screens/home.dart';
 import 'package:locafy/features/screens/message.dart';
 import 'package:locafy/features/screens/profile.dart';
 import 'package:locafy/features/screens/publish.dart';
+import 'package:locafy/features/screens/search_screen.dart';
 
 class NavBarScreen extends StatefulWidget {
   const NavBarScreen({super.key});
@@ -21,7 +22,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
     super.initState();
     _screens = [
       HomeScreen(),
-      Container(color: Colors.green),
+      SearchScreen(),
       PublishScreen(),
       MessagesScreen(),
       ProfileScreen(),
