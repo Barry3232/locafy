@@ -808,6 +808,9 @@ class _PublishScreenState extends State<PublishScreen> {
 
                                 final galleryUrls =
                                     await uploadBusinessImages();
+                                final businessName = _businessNameController
+                                    .text
+                                    .trim();
                                 final currentUser =
                                     FirebaseAuth.instance.currentUser;
                                 if (currentUser == null) {
@@ -828,6 +831,7 @@ class _PublishScreenState extends State<PublishScreen> {
                                   'ownerId': currentUser.uid,
                                   'businessName': _businessNameController.text
                                       .trim(),
+                                  'searchName': businessName.toLowerCase(),
                                   'category': selectedCategory,
                                   'businessType': selectedBusinessType,
                                   'description': _descriptionController.text

@@ -1,4 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,6 +14,102 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+  Uint8List? _profileImageBytes;
+  Map<String, dynamic>? user;
+  bool _isLoadingUser = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserData();
+  }
+
+  Future<void> _getUserData() async {
+    if (currentUser == null) {
+      debugPrint('❌ No authenticated user');
+      setState(() {
+        _isLoadingUser = false;
+      });
+      return;
+    }
+
+    debugPrint('✅ Current user UID: ${currentUser!.uid}');
+
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .get();
+
+      debugPrint('📄 Document exists: ${doc.exists}');
+      debugPrint('📄 Document ID: ${doc.id}');
+      debugPrint('📄 Document data: ${doc.data()}');
+
+      if (!doc.exists) {
+        debugPrint('❌ No user document found for this UID');
+
+        setState(() {
+          _isLoadingUser = false;
+        });
+
+        return;
+      }
+
+      final data = doc.data();
+
+      debugPrint('👤 User data: $data');
+      debugPrint('First name: ${data?['firstName']}');
+      debugPrint('Last name: ${data?['lastName']}');
+      debugPrint('Username: ${data?['username']}');
+
+      if (data != null && data['profileImage'] != null) {
+        _profileImageBytes = base64Decode(data['profileImage']);
+      }
+
+      setState(() {
+        user = data;
+        _isLoadingUser = false;
+      });
+
+      debugPrint('✅ User data loaded successfully');
+    } catch (e) {
+      debugPrint('❌ Error getting user data: $e');
+
+      setState(() {
+        _isLoadingUser = false;
+      });
+    }
+  }
+
+  Future<void> _pickProfileImage() async {
+    if (currentUser == null) return;
+
+    final ImagePicker picker = ImagePicker();
+
+    final XFile? pickedImage = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedImage == null) return;
+    final File imageFile = File(pickedImage.path);
+    final bytes = await imageFile.readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser!.uid)
+          .update({'profileImage': base64Image});
+
+      setState(() {
+        _profileImageBytes = bytes;
+      });
+    } catch (e) {
+      debugPrint('Error updating profile image: $e');
+    }
+  }
+
   Widget profileStat(String number, String label) {
     return Column(
       children: [
@@ -88,9 +190,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 55,
-                                    backgroundColor: Colors.blueGrey,
+                                  GestureDetector(
+                                    onTap: _pickProfileImage,
+                                    child: CircleAvatar(
+                                      radius: 55,
+                                      backgroundColor: Colors.blueGrey,
+                                      backgroundImage:
+                                          _profileImageBytes != null
+                                          ? MemoryImage(_profileImageBytes!)
+                                          : null,
+                                      child: _profileImageBytes == null
+                                          ? const Icon(
+                                              Icons.person,
+                                              size: 50,
+                                              color: Colors.white,
+                                            )
+                                          : null,
+                                    ),
                                   ),
                                   const SizedBox(width: 16),
                                   Column(
@@ -99,7 +215,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       SizedBox(height: 13),
                                       Text(
-                                        'John Doe',
+                                        _isLoadingUser
+                                            ? 'Loading...'
+                                            : '${user?['lastName'] ?? ''} ${user?['firstName'] ?? ''}'
+                                                  .trim(),
                                         style: TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -108,31 +227,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        '@johndoe',
+                                        _isLoadingUser
+                                            ? '@loading...'
+                                            : '@${user?['username'] ?? 'username'}',
                                         style: TextStyle(
                                           fontSize: 16,
                                           color: Colors.grey,
                                         ),
                                       ),
                                       SizedBox(height: 4),
-
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.location_on_outlined,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                          SizedBox(width: 4),
-                                          Text(
-                                            'Port Harcourt, Nigeria',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
 
                                       SizedBox(height: 10),
 

@@ -6,7 +6,7 @@ import 'package:locafy/widgets/home_section/category_wiget.dart';
 
 class CategoriesScreen extends StatefulWidget {
   // final BusinessModel business;
-  final String category;
+  final List<String> category;
   final IconData icon;
   final String title;
   final Color color;
@@ -106,65 +106,72 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             final businesses = snapshot.data!;
 
             return ListView.builder(
-              itemCount: businesses.length,
+              itemCount: businesses.length + 1,
               itemBuilder: (context, index) {
-                final business = businesses[index];
-                print(businesses.length);
-                final distanceCal = business.getFormattedDistance(userPosition);
-                return Column(
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundColor: widget.color,
-                          child: Icon(
-                            widget.icon,
-                            size: 30,
-                            color: widget.iconColor,
+                // Header
+                if (index == 0) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 35,
+                            backgroundColor: widget.color,
+                            child: Icon(
+                              widget.icon,
+                              size: 30,
+                              color: widget.iconColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.title,
-                              textAlign: TextAlign.start,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "${businesses.length} ${businesses.length == 1 ? 'business' : 'businesses'} found",
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 25),
-                    CategoryWidget(
-                      category: business.category,
-                      image: business.image,
-                      businessName: business.name,
-                      distance: "$distanceCal km",
-                      rating: "${business.rating} ",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DetailsScreen(
-                              business: business,
-                              distanceText: "$distanceCal km",
-                            ),
+                              Text(
+                                "${businesses.length} "
+                                "${businesses.length == 1 ? 'business' : 'businesses'} found",
+                              ),
+                            ],
                           ),
-                        );
-                        // Handle tap event, e.g., navigate to business details
-                      },
-                    ),
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 25),
+                    ],
+                  );
+                }
+
+                // Business
+                final business = businesses[index - 1];
+
+                final distanceCal = business.getFormattedDistance(userPosition);
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: CategoryWidget(
+                    category: business.category,
+                    image: business.image,
+                    businessName: business.name,
+                    distance: "$distanceCal km",
+                    rating: "${business.rating}",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailsScreen(
+                            business: business,
+                            distanceText: "$distanceCal km",
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );

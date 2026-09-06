@@ -146,9 +146,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
             const SizedBox(height: 25),
 
-            // -------------------------
-            // SEARCH RESULTS
-            // -------------------------
             if (isSearching)
               Expanded(
                 child: StreamBuilder<List<BusinessModel>>(
@@ -210,9 +207,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                 ),
               )
-            // -------------------------
-            // RECENT SEARCHES
-            // -------------------------
             else ...[
               if (_recentSearches.isNotEmpty)
                 Row(
@@ -338,10 +332,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // ============================================================
   // NO SEARCH RESULTS
-  // ============================================================
-
   Widget _buildNoResults() {
     return Center(
       child: Padding(

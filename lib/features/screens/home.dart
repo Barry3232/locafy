@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return CategoriesScreen(
                                   color: Color(0x14FF9800),
                                   iconColor: Color(0xFFFF9800),
-                                  category: 'Restaurants',
+                                  category: ['Restaurant', 'Cafe'],
                                   icon: Icons.restaurant_outlined,
                                   title: 'Restaurants',
                                 );
@@ -316,7 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return CategoriesScreen(
                                   color: Color(0x1400B0FF),
                                   iconColor: Color(0xFF00B0FF),
-                                  category: 'Hotels',
+                                  category: ['Hotel', 'Resort'],
                                   icon: Icons.hotel_outlined,
                                   title: 'Hotels',
                                 );
@@ -337,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return CategoriesScreen(
                                   color: Color(0x1400C853),
                                   iconColor: Color(0xFF00C853),
-                                  category: 'Shop',
+                                  category: ['Shop', 'Salon'],
                                   icon: Icons.shopping_bag_outlined,
                                   title: 'Shops',
                                 );
@@ -358,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return CategoriesScreen(
                                   color: Color(0x14FF4081),
                                   iconColor: Color(0xFFFF4081),
-                                  category: 'Services',
+                                  category: ['Service', 'Gym'],
                                   icon: Icons.handyman_outlined,
                                   title: 'Services',
                                 );

@@ -15,10 +15,11 @@ class SearchService {
     if (query.trim().isEmpty) {
       return const Stream.empty();
     }
+    final searchQuery = query.trim().toLowerCase();
     return _firestore
         .collection('businesses')
-        .where('businessName', isGreaterThanOrEqualTo: query)
-        .where('businessName', isLessThanOrEqualTo: '$query\uf8ff')
+        .where('searchName', isGreaterThanOrEqualTo: searchQuery)
+        .where('searchName', isLessThanOrEqualTo: '$searchQuery\uf8ff')
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
@@ -26,4 +27,22 @@ class SearchService {
               .toList(),
         );
   }
+
+  // Future<void> migrateBusinessSearchNames() async {
+  //   final snapshot = await _firestore.collection('businesses').get();
+
+  //   for (final doc in snapshot.docs) {
+  //     final data = doc.data();
+
+  //     final businessName = data['businessName'];
+
+  //     if (businessName == null) {
+  //       continue;
+  //     }
+
+  //     await doc.reference.update({
+  //       'searchName': businessName.toString().trim().toLowerCase(),
+  //     });
+  //   }
+  // }
 }
