@@ -3,12 +3,14 @@ import 'package:locafy/models/business_model.dart';
 
 class PopularGridItem extends StatelessWidget {
   final BusinessModel business;
+  final String distanceText;
   final VoidCallback onTap;
 
   const PopularGridItem({
     super.key,
     required this.business,
     required this.onTap,
+    required this.distanceText,
   });
 
   ImageProvider getBusinessImage(String image) {
@@ -103,7 +105,7 @@ class PopularGridItem extends StatelessWidget {
                             SizedBox(width: 4),
 
                             Text(
-                              business.distanc!,
+                              business.distanc ?? distanceText,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: Colors.grey,

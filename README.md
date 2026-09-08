@@ -1,17 +1,80 @@
-# locafy
+# Locafy 
+**Find Places. Connect Local.**
 
-A new Flutter project.
+Locafy is a Flutter-based local business discovery application designed to help users discover businesses and places around them. Users can browse businesses by category, search for businesses, view business details, and communicate directly with business owners.
 
-## Getting Started
+The project was built as a personal portfolio project to demonstrate practical Flutter development, Firebase integration, location-based functionality, and real-time communication.
 
-This project is a starting point for a Flutter application.
+## **Features**
 
-A few resources to get you started if this is your first Flutter project:
+- **User Authentication**
+  - User registration and login
+  - Firebase Authentication
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Location-Based Discovery**
+  - Uses the user's location to determine distance from businesses
+  - Displays businesses based on local discovery
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Business Discovery**
+  - Browse businesses by category
+  - Restaurants and cafés
+  - Shops
+  - Hotels
+  - Apartments
+  - Gyms and fitness
+
+- **Business Search**
+    - Search businesses by name
+    - Case-insensitive search
+    - Search history/recent searches
+
+- **Business Details**
+    - View business information
+    - Business images
+    - Ratings
+    - Distance from the user
+    - Contact/business interaction options
+
+- **Real-Time Messaging**
+    - Customers can chat with business owners
+    - Real-time message updates using Firebase Firestore
+    - Read/seen message status
+    - Unread message counters
+    - Conversation list showing the latest message
+
+- **User Profiles**
+    - User profile information
+    - Username
+    - Profile image
+
+- **Responsive UI**
+    - Clean and modern interface
+    - Category-based navigation
+    - Reusable Flutter widgets
+
+## Tech Stack
+
+### Frontend
+   - Flutter
+   - Dart
+
+### Backend & Database
+   - Firebase Authentication
+   - Cloud Firestore
+   
+### Media Storage
+   - Cloudinary
+
+### Maps & Location
+   - Geolocator
+   - latlong2
+   - OSRM (Open Source Routing Machine) Routing API
+
+### Networking
+- Dio
+
+### Development Tools
+- Git
+- GitHub
+- VS Code
+- Android Studio

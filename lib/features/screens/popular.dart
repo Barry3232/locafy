@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:locafy/models/business_model.dart';
 import 'package:locafy/features/screens/details.dart';
 import 'package:locafy/widgets/home_section/porpular_grid_items.dart';
 
-class PopularBusinessesScreen extends StatelessWidget {
+class PopularBusinessesScreen extends StatefulWidget {
   final List<BusinessModel> businesses;
 
   const PopularBusinessesScreen({super.key, required this.businesses});
+
+  @override
+  State<PopularBusinessesScreen> createState() =>
+      _PopularBusinessesScreenState();
+}
+
+class _PopularBusinessesScreenState extends State<PopularBusinessesScreen> {
+  Position? userPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation();
+  }
+
+  Future<void> getUserLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    final position = await Geolocator.getCurrentPosition();
+    if (mounted) {
+      setState(() {
+        userPosition = position;
+      });
+    }
+    print('USER LAT: ${position.latitude}');
+    print('USER LNG: ${position.longitude}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +61,7 @@ class PopularBusinessesScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: GridView.builder(
           padding: EdgeInsets.zero,
-          itemCount: businesses.length,
+          itemCount: widget.businesses.length,
 
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // 2 per row
@@ -39,17 +74,19 @@ class PopularBusinessesScreen extends StatelessWidget {
           ),
 
           itemBuilder: (context, index) {
-            final business = businesses[index];
+            final business = widget.businesses[index];
+            final distanceText = business.getFormattedDistance(userPosition);
 
             return PopularGridItem(
               business: business,
+              distanceText: business.distanc ?? distanceText,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => DetailsScreen(
                       business: business,
-                      distanceText: business.distanc ?? '${business.distance}',
+                      distanceText: business.distanc ?? distanceText,
                     ),
                   ),
                 );
