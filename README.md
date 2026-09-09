@@ -160,7 +160,7 @@ Clone the repository:
 ### Home Screen
 
 <p align="center">
-  <img src="./assets/readme/home.jpeg" width="45%" />
+  <img src="./assets/readme/Home.jpeg" width="45%" />
   <img src="./assets/readme/home1.jpeg" width="45%" />
 </p>
 
